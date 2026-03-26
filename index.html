@@ -4,6 +4,691 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>XAUUSD Risk Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:       #F5C842;
+      --gold-dim:   #C9A227;
+      --gold-glow:  rgba(245,200,66,.15);
+      --gold-ring:  rgba(245,200,66,.30);
+      --bg:         #0C0D11;
+      --surface:    #12141B;
+      --surface-2:  #191C26;
+      --surface-3:  #20243A;
+      --border:     rgba(255,255,255,.06);
+      --border-md:  rgba(255,255,255,.10);
+      --text:       #E6E8F2;
+      --text-muted: #787C9A;
+      --text-dim:   #44485F;
+      --green:      #27C97E;
+      --green-bg:   rgba(39,201,126,.11);
+      --green-bdr:  rgba(39,201,126,.22);
+      --amber:      #F0A020;
+      --amber-bg:   rgba(240,160,32,.11);
+      --amber-bdr:  rgba(240,160,32,.22);
+      --red:        #E04848;
+      --red-bg:     rgba(224,72,72,.11);
+      --red-bdr:    rgba(224,72,72,.22);
+      --shadow-card: 0 2px 24px rgba(0,0,0,.5);
+      --radius:     12px;
+      --radius-sm:  8px;
+      --radius-xs:  5px;
+    }
+    [data-theme="light"] {
+      --bg:         #EEF0F6;
+      --surface:    #FFFFFF;
+      --surface-2:  #F5F6FA;
+      --surface-3:  #EAECF4;
+      --border:     rgba(0,0,0,.07);
+      --border-md:  rgba(0,0,0,.12);
+      --text:       #12142A;
+      --text-muted: #636882;
+      --text-dim:   #A4A8C4;
+      --shadow-card: 0 2px 18px rgba(0,0,0,.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+      transition: background .3s, color .3s;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 44px 44px; pointer-events: none; z-index: 0;
+    }
+
+    .app { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 28px 20px 72px; }
+
+    /* HEADER */
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    .brand { display: flex; align-items: center; gap: 13px; }
+    .brand-icon {
+      width: 46px; height: 46px; border-radius: 13px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+      display: grid; place-items: center; font-size: 22px;
+      box-shadow: 0 4px 18px rgba(245,200,66,.38); flex-shrink: 0;
+    }
+    .brand-text h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+    .brand-text p  { font-size: .65rem; font-weight: 500; color: var(--text-muted); margin-top: 2px; letter-spacing: .1em; text-transform: uppercase; }
+    .header-right  { display: flex; align-items: center; gap: 9px; }
+    .live-badge {
+      display: flex; align-items: center; gap: 7px;
+      font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--text-muted);
+      background: var(--surface); border: 1px solid var(--border-md);
+      padding: 6px 13px; border-radius: 100px;
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 7px var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .theme-btn {
+      width: 36px; height: 36px; border-radius: 9px;
+      border: 1px solid var(--border-md); background: var(--surface);
+      color: var(--text-muted); cursor: pointer; font-size: 15px;
+      display: grid; place-items: center; transition: all .2s;
+    }
+    .theme-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    .section-label { font-size: .62rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; padding-left: 1px; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-card); transition: background .3s, border-color .3s; margin-bottom: 16px; }
+
+    /* DIRECTION */
+    .dir-toggle { display: flex; gap: 8px; margin-bottom: 18px; }
+    .dir-btn {
+      flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--border-md);
+      background: var(--surface-2); color: var(--text-muted);
+      font-family: 'Poppins', sans-serif; font-size: .78rem; font-weight: 600;
+      cursor: pointer; transition: all .2s; letter-spacing: .03em;
+    }
+    .dir-btn.active-long  { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+    .dir-btn.active-short { background: var(--red-bg);   border-color: var(--red);   color: var(--red); }
+
+    /* INPUT GRID */
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-bottom: 20px; }
+    @media (max-width: 520px) { .input-grid { grid-template-columns: 1fr; } }
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+    .input-group label { font-size: .67rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+    .input-wrap { position: relative; }
+    .input-wrap .prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--text-dim); pointer-events: none; }
+    input[type="number"] {
+      width: 100%; background: var(--surface-2); border: 1.5px solid var(--border-md);
+      border-radius: var(--radius-sm); color: var(--text);
+      font-family: 'JetBrains Mono', monospace; font-size: .92rem; font-weight: 400;
+      padding: 10px 13px 10px 30px; outline: none;
+      transition: border-color .2s, box-shadow .2s, background .25s;
+      -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-ring); background: var(--surface-3); }
+
+    .calc-btn {
+      width: 100%; padding: 13px; border-radius: var(--radius-sm); border: none;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+      color: #0C0D11; font-family: 'Poppins', sans-serif;
+      font-size: .88rem; font-weight: 700; letter-spacing: .04em; cursor: pointer;
+      transition: transform .15s, box-shadow .15s, filter .15s;
+      box-shadow: 0 4px 18px rgba(245,200,66,.32);
+    }
+    .calc-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(245,200,66,.48); filter: brightness(1.05); }
+    .calc-btn:active { transform: none; }
+
+    /* METRICS */
+    .metrics-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 11px; margin-bottom: 16px; }
+    @media (max-width: 580px) { .metrics-strip { grid-template-columns: 1fr 1fr; } }
+    .metric-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 16px 16px 14px;
+      position: relative; overflow: hidden;
+      transition: border-color .2s, transform .2s; box-shadow: var(--shadow-card);
+    }
+    .metric-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.5px; background: var(--accent, var(--gold)); }
+    .metric-card:hover   { transform: translateY(-2px); border-color: var(--accent, var(--gold)); }
+    .metric-label { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
+    .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 1.38rem; font-weight: 600; color: var(--accent, var(--gold)); line-height: 1; }
+    .metric-sub   { font-size: .64rem; color: var(--text-dim); margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
+
+    /* GAUGE */
+    .gauge-section { margin-bottom: 18px; }
+    .gauge-section:last-child { margin-bottom: 0; }
+    .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+    .gauge-title  { font-size: .68rem; font-weight: 600; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; }
+    .gauge-value  { font-family: 'JetBrains Mono', monospace; font-size: .82rem; font-weight: 500; color: var(--text); }
+    .gauge-track  { height: 7px; background: var(--surface-3); border-radius: 100px; overflow: hidden; }
+    .gauge-fill   { height: 100%; border-radius: 100px; transition: width .55s cubic-bezier(.34,1.4,.64,1), background .3s; }
+
+    /* RRR BAR */
+    .rrr-visual { display: flex; height: 30px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-md); margin-top: 9px; }
+    .rrr-risk-bar, .rrr-reward-bar {
+      height: 100%; display: flex; align-items: center; justify-content: center;
+      transition: width .5s ease; font-family: 'JetBrains Mono', monospace;
+      font-size: .65rem; font-weight: 600; white-space: nowrap; overflow: hidden; letter-spacing: .06em;
+    }
+    .rrr-risk-bar   { background: rgba(224,72,72,.28);  color: var(--red); }
+    .rrr-reward-bar { background: rgba(39,201,126,.28); color: var(--green); }
+
+    /* VERDICTS */
+    .verdict-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    @media (max-width: 480px) { .verdict-grid { grid-template-columns: 1fr; } }
+    .verdict { border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: flex-start; gap: 11px; border: 1px solid transparent; transition: all .25s; }
+    .verdict.good    { background: var(--green-bg); border-color: var(--green-bdr); }
+    .verdict.warning { background: var(--amber-bg); border-color: var(--amber-bdr); }
+    .verdict.bad     { background: var(--red-bg);   border-color: var(--red-bdr); }
+    .verdict-icon  { font-size: 1.25rem; flex-shrink: 0; margin-top: 1px; }
+    .verdict-title { font-size: .77rem; font-weight: 700; letter-spacing: .01em; }
+    .verdict.good .verdict-title    { color: var(--green); }
+    .verdict.warning .verdict-title { color: var(--amber); }
+    .verdict.bad .verdict-title     { color: var(--red); }
+    .verdict-desc { font-size: .71rem; color: var(--text-muted); margin-top: 3px; line-height: 1.55; }
+
+    .tip-bar { display: flex; align-items: flex-start; gap: 10px; background: var(--gold-glow); border: 1px solid var(--gold-ring); border-radius: var(--radius-sm); padding: 11px 15px; margin-top: 14px; }
+    .tip-bar span { font-size: .75rem; color: var(--text-muted); line-height: 1.55; }
+    .tip-bar strong { color: var(--gold); font-weight: 600; }
+
+    /* EXTENDED */
+    .ext-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    @media (max-width: 580px) { .ext-grid { grid-template-columns: 1fr 1fr; } }
+    .ext-label { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
+    .ext-value { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 500; color: var(--text); }
+
+    /* ── FORMULA GUIDE ── */
+    .formula-tabs { display: flex; gap: 0; flex-wrap: wrap; border-bottom: 1px solid var(--border-md); }
+    .ftab {
+      padding: 9px 18px; font-size: .72rem; font-weight: 600;
+      color: var(--text-muted); cursor: pointer; border: none;
+      background: transparent; border-bottom: 2px solid transparent;
+      margin-bottom: -1px; transition: color .2s, border-color .2s;
+      font-family: 'Poppins', sans-serif; letter-spacing: .02em; white-space: nowrap;
+    }
+    .ftab.active             { color: var(--gold); border-bottom-color: var(--gold); }
+    .ftab:hover:not(.active) { color: var(--text); }
+
+    .fpanel        { display: none; padding-top: 20px; }
+    .fpanel.active { display: block; }
+
+    .formula-block { background: var(--surface-2); border: 1px solid var(--border-md); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 12px; }
+    .formula-block:last-child { margin-bottom: 0; }
+
+    .fb-header   { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .fb-icon     { width: 30px; height: 30px; border-radius: var(--radius-xs); background: var(--gold-glow); border: 1px solid var(--gold-ring); display: grid; place-items: center; font-size: .95rem; flex-shrink: 0; }
+    .fb-title    { font-size: .82rem; font-weight: 700; color: var(--text); }
+    .fb-subtitle { font-size: .67rem; color: var(--text-muted); margin-top: 1px; }
+
+    .formula-eq {
+      font-family: 'JetBrains Mono', monospace; font-size: .86rem; font-weight: 500;
+      color: var(--gold); background: var(--surface-3);
+      border: 1px solid var(--border-md); border-radius: var(--radius-xs);
+      padding: 11px 14px; margin-bottom: 10px; letter-spacing: .01em;
+      line-height: 1.8; white-space: pre-wrap;
+    }
+    .fb-desc { font-size: .73rem; color: var(--text-muted); line-height: 1.65; }
+
+    .var-table, .thresh-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .var-table th, .thresh-table th { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border-md); }
+    .var-table td, .thresh-table td { font-size: .72rem; padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-muted); }
+    .var-table tr:last-child td, .thresh-table tr:last-child td { border-bottom: none; }
+    .var-name { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--gold) !important; white-space: nowrap; }
+
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 100px; font-size: .62rem; font-weight: 700; letter-spacing: .04em; }
+    .badge-good    { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bdr); }
+    .badge-warning { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bdr); }
+    .badge-bad     { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-bdr); }
+
+    .note-box { background: var(--surface-3); border-left: 3px solid var(--gold); border-radius: 0 var(--radius-xs) var(--radius-xs) 0; padding: 10px 14px; margin-top: 12px; font-size: .72rem; color: var(--text-muted); line-height: 1.6; }
+    .note-box strong { color: var(--gold); font-weight: 600; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .card, .metric-card { animation: fadeUp .38s ease both; }
+    .metric-card:nth-child(2){animation-delay:.05s}
+    .metric-card:nth-child(3){animation-delay:.10s}
+    .metric-card:nth-child(4){animation-delay:.15s}
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h1>XAUUSD Risk Desk</h1>
+        <p>Trade Intelligence Dashboard</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge"><div class="live-dot"></div>LIVE CALC</div>
+      <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+    </div>
+  </header>
+
+  <!-- INPUTS -->
+  <div class="section-label">Trade Parameters</div>
+  <div class="card">
+    <div class="dir-toggle">
+      <button class="dir-btn active-long"  id="btnLong"  onclick="setDir('long')">▲ LONG / BUY</button>
+      <button class="dir-btn"              id="btnShort" onclick="setDir('short')">▼ SHORT / SELL</button>
+    </div>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>💰 Account Balance</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="balance" value="1000" min="0" step="100" oninput="calc()"/></div>
+      </div>
+      <div class="input-group">
+        <label>📦 Lot Size</label>
+        <div class="input-wrap"><span class="prefix">L</span><input type="number" id="lotSize" value="0.01" min="0" step="0.01" oninput="calc()"/></div>
+      </div>
+      <div class="input-group">
+        <label>🎯 Entry Price</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="entry" value="2000" step="0.01" oninput="calc()"/></div>
+      </div>
+      <div class="input-group">
+        <label>🛑 Stop Loss (SL)</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="sl" value="1995" step="0.01" oninput="calc()"/></div>
+      </div>
+      <div class="input-group" style="grid-column:1/-1;">
+        <label>✅ Take Profit (TP)</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="tp" value="2010" step="0.01" oninput="calc()"/></div>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calc()">⚡ Calculate Risk & Reward</button>
+  </div>
+
+  <!-- METRICS -->
+  <div class="section-label">Results Overview</div>
+  <div class="metrics-strip">
+    <div class="metric-card" style="--accent:var(--red)">
+      <div class="metric-label">Risk $</div>
+      <div class="metric-value" id="outRiskD">—</div>
+      <div class="metric-sub"  id="outRiskPts">— pts</div>
+    </div>
+    <div class="metric-card" style="--accent:var(--green)">
+      <div class="metric-label">Reward $</div>
+      <div class="metric-value" id="outRewardD">—</div>
+      <div class="metric-sub"  id="outRewardPts">— pts</div>
+    </div>
+    <div class="metric-card" style="--accent:var(--amber)">
+      <div class="metric-label">Risk %</div>
+      <div class="metric-value" id="outRiskPct">—</div>
+      <div class="metric-sub">of account</div>
+    </div>
+    <div class="metric-card" style="--accent:var(--gold)">
+      <div class="metric-label">RRR</div>
+      <div class="metric-value" id="outRRR">—</div>
+      <div class="metric-sub">risk : reward</div>
+    </div>
+  </div>
+
+  <!-- VISUAL -->
+  <div class="card">
+    <div class="gauge-section">
+      <div class="gauge-header">
+        <span class="gauge-title">Risk Exposure (0–5% scale)</span>
+        <span class="gauge-value" id="gaugeRiskLabel">0.00%</span>
+      </div>
+      <div class="gauge-track"><div class="gauge-fill" id="gaugeRisk" style="width:0%;background:var(--green)"></div></div>
+    </div>
+    <div class="gauge-section">
+      <div class="gauge-header">
+        <span class="gauge-title">Risk vs Reward Split</span>
+        <span class="gauge-value" id="rrrLabel">1 : —</span>
+      </div>
+      <div class="rrr-visual">
+        <div class="rrr-risk-bar"   id="rrrRiskBar"   style="width:50%">RISK</div>
+        <div class="rrr-reward-bar" id="rrrRewardBar" style="width:50%">REWARD</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERDICTS -->
+  <div class="section-label">Trade Quality Check</div>
+  <div class="card">
+    <div class="verdict-grid">
+      <div class="verdict" id="verdictRRR">
+        <div class="verdict-icon" id="vRRRIcon">⏳</div>
+        <div class="verdict-body">
+          <div class="verdict-title" id="vRRRTitle">Awaiting input</div>
+          <div class="verdict-desc"  id="vRRRDesc">Enter trade parameters to see RRR quality.</div>
+        </div>
+      </div>
+      <div class="verdict" id="verdictRisk">
+        <div class="verdict-icon" id="vRiskIcon">⏳</div>
+        <div class="verdict-body">
+          <div class="verdict-title" id="vRiskTitle">Awaiting input</div>
+          <div class="verdict-desc"  id="vRiskDesc">Enter trade parameters to see risk level.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip-bar">
+      <span>💡</span>
+      <span>Always target a minimum <strong>1:2 RRR</strong> and keep risk below <strong>1–2% per trade</strong> to protect capital long-term.</span>
+    </div>
+  </div>
+
+  <!-- EXTENDED STATS -->
+  <div class="section-label">Extended Stats</div>
+  <div class="card">
+    <div class="ext-grid">
+      <div><div class="ext-label">Risk Points</div><div class="ext-value" id="extRiskPips">—</div></div>
+      <div><div class="ext-label">Reward Points</div><div class="ext-value" id="extRewardPips">—</div></div>
+      <div><div class="ext-label">$ / Point</div><div class="ext-value" id="extPipVal">—</div></div>
+      <div><div class="ext-label">Breakeven RRR</div><div class="ext-value">1 : 1.00</div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- FORMULA GUIDE                                           -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-label" style="margin-top:8px;">Formula &amp; Calculation Guide</div>
+  <div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:0 22px;">
+      <div class="formula-tabs" id="tabs">
+        <button class="ftab active" data-panel="p-core">Core Formulas</button>
+        <button class="ftab" data-panel="p-pip">Pip &amp; Lot Sizes</button>
+        <button class="ftab" data-panel="p-thresholds">Thresholds</button>
+        <button class="ftab" data-panel="p-example">Worked Example</button>
+      </div>
+    </div>
+    <div style="padding:0 22px 22px;">
+
+      <!-- CORE -->
+      <div class="fpanel active" id="p-core">
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">📏</div><div><div class="fb-title">Risk Points &amp; Reward Points</div><div class="fb-subtitle">Distance from entry to SL / TP in price units</div></div></div>
+          <div class="formula-eq">Risk Points   = |Entry − Stop Loss|
+Reward Points = |Take Profit − Entry|</div>
+          <div class="fb-desc">Absolute value is used so the formula works for both LONG and SHORT trades. For LONG: Entry &gt; SL and TP &gt; Entry. For SHORT: Entry &lt; SL and TP &lt; Entry.</div>
+          <table class="var-table">
+            <tr><th>Variable</th><th>Meaning</th></tr>
+            <tr><td class="var-name">Entry</td><td>Your trade open price (e.g. 2000.00)</td></tr>
+            <tr><td class="var-name">SL</td><td>Stop Loss — where you exit if the trade moves against you</td></tr>
+            <tr><td class="var-name">TP</td><td>Take Profit — your target exit where you lock in profit</td></tr>
+          </table>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">💵</div><div><div class="fb-title">Risk in Dollars &amp; Reward in Dollars</div><div class="fb-subtitle">Monetary value of your risk and potential gain</div></div></div>
+          <div class="formula-eq">Risk ($)   = Risk Points   × Lot Size × 100
+Reward ($) = Reward Points × Lot Size × 100</div>
+          <div class="fb-desc">For XAUUSD, 1 standard lot = 100 oz of gold. A $1.00 price move on 1 standard lot = $100 P&amp;L. So the multiplier is <strong style="color:var(--gold)">Lot Size × 100</strong>, giving dollar value per point.</div>
+          <table class="var-table">
+            <tr><th>Variable</th><th>Meaning</th></tr>
+            <tr><td class="var-name">Lot Size</td><td>Number of lots traded (0.01 = micro, 0.10 = mini, 1.00 = standard)</td></tr>
+            <tr><td class="var-name">× 100</td><td>XAUUSD contract = 100 oz/lot → $100 per full point per standard lot</td></tr>
+          </table>
+          <div class="note-box"><strong>Example:</strong> 5 risk points × 0.01 lot × 100 = <strong>$5.00 at risk</strong>. The same move on 0.10 lot = $50 at risk.</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">📊</div><div><div class="fb-title">Risk Percentage</div><div class="fb-subtitle">Portion of your account balance being risked</div></div></div>
+          <div class="formula-eq">Risk (%) = ( Risk ($) ÷ Account Balance ) × 100</div>
+          <div class="fb-desc">This tells you what fraction of your trading capital is at stake on this single trade. Professional traders treat this as the single most important number — it governs long-term survival.</div>
+          <table class="var-table">
+            <tr><th>Variable</th><th>Meaning</th></tr>
+            <tr><td class="var-name">Risk ($)</td><td>Dollar loss if SL is hit (calculated from formula above)</td></tr>
+            <tr><td class="var-name">Balance</td><td>Your current account equity in USD</td></tr>
+          </table>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">⚖️</div><div><div class="fb-title">Risk-to-Reward Ratio (RRR)</div><div class="fb-subtitle">How much you gain vs. how much you risk per trade</div></div></div>
+          <div class="formula-eq">RRR = Reward ($) ÷ Risk ($)
+    → expressed as  1 : RRR</div>
+          <div class="fb-desc">A RRR of 2.0 means "for every $1 risked, you stand to make $2." Always expressed with Risk as 1, so RRR = 2.5 is written as 1 : 2.5.</div>
+          <div class="note-box"><strong>Why it matters:</strong> With 1:2 RRR you only need to be right <strong>34%</strong> of the time to break even. With 1:3 that drops to <strong>25%</strong>. Higher RRR = more room to be wrong.</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">📐</div><div><div class="fb-title">Dollar Value per Point (Pip Value)</div><div class="fb-subtitle">How much a $1 price move is worth at your lot size</div></div></div>
+          <div class="formula-eq">$ per Point = Lot Size × 100</div>
+          <div class="fb-desc">Gold is quoted in USD per troy ounce. 1 standard lot = 100 oz, so a $1 price change = $100 P&amp;L. Scale linearly with lot size.</div>
+          <table class="var-table">
+            <tr><th>Lot Size</th><th>Type</th><th>$ per Point</th></tr>
+            <tr><td class="var-name">1.00</td><td>Standard Lot</td><td>$100.00</td></tr>
+            <tr><td class="var-name">0.10</td><td>Mini Lot</td><td>$10.00</td></tr>
+            <tr><td class="var-name">0.01</td><td>Micro Lot</td><td>$1.00</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- PIP & LOT -->
+      <div class="fpanel" id="p-pip">
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">📦</div><div><div class="fb-title">Lot Size Contract Sizes</div><div class="fb-subtitle">Standard contract sizes in XAUUSD</div></div></div>
+          <div class="formula-eq">1 Standard Lot = 100 troy ounces of gold
+1 Mini Lot     =  10 troy ounces  (0.10 lots)
+1 Micro Lot    =   1 troy ounce   (0.01 lots)</div>
+          <table class="var-table">
+            <tr><th>Lot</th><th>Ounces</th><th>$1 Move</th><th>$10 Move</th><th>$100 Move</th></tr>
+            <tr><td class="var-name">1.00</td><td>100 oz</td><td>$100</td><td>$1,000</td><td>$10,000</td></tr>
+            <tr><td class="var-name">0.10</td><td>10 oz</td><td>$10</td><td>$100</td><td>$1,000</td></tr>
+            <tr><td class="var-name">0.01</td><td>1 oz</td><td>$1</td><td>$10</td><td>$100</td></tr>
+          </table>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">🔢</div><div><div class="fb-title">Reverse-Engineering Lot Size</div><div class="fb-subtitle">Find the correct lot size for a fixed risk amount</div></div></div>
+          <div class="formula-eq">Max Risk ($)  = Account Balance × (Risk % ÷ 100)
+
+Lot Size = Max Risk ($) ÷ (Risk Points × 100)</div>
+          <div class="fb-desc">Use this to position-size correctly. Decide your risk % first, then solve for lot size — never the other way around. This keeps risk consistent regardless of SL distance.</div>
+          <div class="note-box"><strong>Example:</strong> $5,000 balance · 1% risk · 15-point SL<br>Max Risk = $5,000 × 0.01 = <strong>$50</strong><br>Lot Size = $50 ÷ (15 × 100) = <strong>0.033 lots</strong></div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">💱</div><div><div class="fb-title">Points vs Pips in XAUUSD</div><div class="fb-subtitle">Terminology used throughout this calculator</div></div></div>
+          <div class="formula-eq">1 Point = $1.00 price change in XAUUSD
+         (e.g. 2000.00 → 2001.00 = 1 point)
+
+1 Pip   = 0.01 price change (2nd decimal place)
+         (e.g. 2000.00 → 2000.01 = 1 pip = 0.01 points)</div>
+          <div class="fb-desc">This calculator uses <strong style="color:var(--gold)">points</strong> (whole dollar moves) as the base unit since SL and TP are typically set in whole increments for gold. Some brokers display gold in "pips" (0.01) — divide by 100 to convert to points.</div>
+        </div>
+      </div>
+
+      <!-- THRESHOLDS -->
+      <div class="fpanel" id="p-thresholds">
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">⚖️</div><div><div class="fb-title">RRR Threshold Table</div><div class="fb-subtitle">How this dashboard classifies your ratio</div></div></div>
+          <table class="thresh-table">
+            <tr><th>RRR Range</th><th>Rating</th><th>Break-even Win Rate</th><th>Verdict</th></tr>
+            <tr><td>Below 1:1</td><td><span class="badge badge-bad">BAD</span></td><td>Above 50%</td><td style="color:var(--red)">Avoid — reward &lt; risk</td></tr>
+            <tr><td>1:1 – 1:1.99</td><td><span class="badge badge-warning">AVERAGE</span></td><td>34% – 50%</td><td style="color:var(--amber)">Acceptable, aim higher</td></tr>
+            <tr><td>1:2 – 1:2.99</td><td><span class="badge badge-good">GOOD</span></td><td>25% – 33%</td><td style="color:var(--green)">Professional standard</td></tr>
+            <tr><td>1:3 and above</td><td><span class="badge badge-good">EXCELLENT</span></td><td>Below 25%</td><td style="color:var(--green)">High edge setups</td></tr>
+          </table>
+          <div class="note-box"><strong>Break-even win rate formula:</strong> Win Rate (%) = 1 ÷ (1 + RRR) × 100<br>At 1:2 RRR → 1 ÷ 3 × 100 = <strong>33.3%</strong> — you can lose 2 trades out of 3 and still not lose money.</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">🛡️</div><div><div class="fb-title">Risk % Threshold Table</div><div class="fb-subtitle">Standard money management rules used by professionals</div></div></div>
+          <table class="thresh-table">
+            <tr><th>Risk %</th><th>Rating</th><th>Typical User</th><th>Verdict</th></tr>
+            <tr><td>≤ 0.5%</td><td><span class="badge badge-good">SAFE</span></td><td>Conservative / fund manager</td><td style="color:var(--green)">Highly protected capital</td></tr>
+            <tr><td>0.5% – 1%</td><td><span class="badge badge-good">SAFE</span></td><td>Professional retail trader</td><td style="color:var(--green)">Standard professional risk</td></tr>
+            <tr><td>1% – 2%</td><td><span class="badge badge-warning">MODERATE</span></td><td>Intermediate trader</td><td style="color:var(--amber)">Manageable — stay alert</td></tr>
+            <tr><td>Above 2%</td><td><span class="badge badge-bad">HIGH</span></td><td>Over-leveraged</td><td style="color:var(--red)">Dangerous — reduce size</td></tr>
+          </table>
+          <div class="note-box"><strong>The 2% Rule compounded:</strong> Risking 2% per trade after 10 consecutive losses leaves you at <strong>81.7%</strong> of original balance. At 10% risk per trade, 10 losses destroys <strong>65%</strong> of your account.</div>
+        </div>
+      </div>
+
+      <!-- WORKED EXAMPLE -->
+      <div class="fpanel" id="p-example">
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">📖</div><div><div class="fb-title">Full Worked Example</div><div class="fb-subtitle">Step-by-step using the default values in this calculator</div></div></div>
+          <div class="formula-eq">Given:
+  Account Balance  =  $1,000.00
+  Lot Size         =  0.01
+  Entry Price      =  2000.00
+  Stop Loss (SL)   =  1995.00
+  Take Profit (TP) =  2010.00</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">1️⃣</div><div><div class="fb-title">Step 1 — Calculate Points</div></div></div>
+          <div class="formula-eq">Risk Points   = |2000.00 − 1995.00| =  5.00 pts
+Reward Points = |2010.00 − 2000.00| = 10.00 pts</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">2️⃣</div><div><div class="fb-title">Step 2 — Dollar Value per Point</div></div></div>
+          <div class="formula-eq">$ per Point = 0.01 lot × 100 = $1.00 per point</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">3️⃣</div><div><div class="fb-title">Step 3 — Risk &amp; Reward in Dollars</div></div></div>
+          <div class="formula-eq">Risk ($)   =  5.00 pts × $1.00/pt =  $5.00
+Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">4️⃣</div><div><div class="fb-title">Step 4 — Risk Percentage</div></div></div>
+          <div class="formula-eq">Risk (%) = ($5.00 ÷ $1,000.00) × 100 = 0.50%</div>
+          <div class="fb-desc" style="color:var(--green);">✅ 0.50% — within the professional safe zone (below 1%)</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="fb-header"><div class="fb-icon">5️⃣</div><div><div class="fb-title">Step 5 — Risk-to-Reward Ratio</div></div></div>
+          <div class="formula-eq">RRR = $10.00 ÷ $5.00 = 2.00  →  1 : 2.00</div>
+          <div class="fb-desc" style="color:var(--green);">✅ 1:2 — meets the professional minimum (good trade)</div>
+          <div class="note-box"><strong>Final verdict:</strong> This trade risks $5 to make $10 (1:2 RRR), using only 0.50% of the $1,000 account. Break-even win rate = 33.3%. This is a <strong>well-structured, low-risk trade</strong> that aligns with professional standards.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let dir = 'long';
+
+  function setDir(d) {
+    dir = d;
+    document.getElementById('btnLong' ).className = 'dir-btn' + (d==='long'  ? ' active-long'  : '');
+    document.getElementById('btnShort').className = 'dir-btn' + (d==='short' ? ' active-short' : '');
+    calc();
+  }
+
+  function calc() {
+    const balance = parseFloat(document.getElementById('balance').value) || 0;
+    const lot     = parseFloat(document.getElementById('lotSize').value) || 0;
+    const entry   = parseFloat(document.getElementById('entry').value)   || 0;
+    const sl      = parseFloat(document.getElementById('sl').value)      || 0;
+    const tp      = parseFloat(document.getElementById('tp').value)      || 0;
+
+    const riskPts   = Math.abs(entry - sl);
+    const rewardPts = Math.abs(tp - entry);
+    const pipVal    = lot * 100;
+    const riskD     = riskPts * pipVal;
+    const rewardD   = rewardPts * pipVal;
+    const riskPct   = balance > 0 ? (riskD / balance * 100) : 0;
+    const rrr       = riskD > 0 ? (rewardD / riskD) : 0;
+
+    set('outRiskD',     '$' + riskD.toFixed(2));
+    set('outRewardD',   '$' + rewardD.toFixed(2));
+    set('outRiskPct',   riskPct.toFixed(2) + '%');
+    set('outRRR',       '1 : ' + rrr.toFixed(2));
+    set('outRiskPts',   riskPts.toFixed(2) + ' pts');
+    set('outRewardPts', rewardPts.toFixed(2) + ' pts');
+    set('extRiskPips',   riskPts.toFixed(2) + ' pts');
+    set('extRewardPips', rewardPts.toFixed(2) + ' pts');
+    set('extPipVal',     '$' + pipVal.toFixed(2));
+
+    const gFill = document.getElementById('gaugeRisk');
+    gFill.style.width      = Math.min(riskPct / 5 * 100, 100) + '%';
+    gFill.style.background = riskPct <= 1 ? 'var(--green)' : riskPct <= 2 ? 'var(--amber)' : 'var(--red)';
+    set('gaugeRiskLabel', riskPct.toFixed(2) + '%');
+
+    const total   = riskPts + rewardPts;
+    const rShare  = total > 0 ? riskPts   / total * 100 : 50;
+    const rwShare = total > 0 ? rewardPts / total * 100 : 50;
+    document.getElementById('rrrRiskBar').style.width   = rShare  + '%';
+    document.getElementById('rrrRewardBar').style.width = rwShare + '%';
+    document.getElementById('rrrRiskBar').textContent   = rShare  > 12 ? 'RISK'   : '';
+    document.getElementById('rrrRewardBar').textContent = rwShare > 12 ? 'REWARD' : '';
+    set('rrrLabel', '1 : ' + rrr.toFixed(2));
+
+    verdictRRR(rrr);
+    verdictRisk(riskPct);
+  }
+
+  function verdictRRR(rrr) {
+    const el = document.getElementById('verdictRRR');
+    const icon  = document.getElementById('vRRRIcon');
+    const title = document.getElementById('vRRRTitle');
+    const desc  = document.getElementById('vRRRDesc');
+    el.className = 'verdict';
+    if (rrr <= 0) { icon.textContent='⏳'; title.textContent='Awaiting input'; desc.textContent='Enter trade parameters.'; return; }
+    if (rrr < 1) {
+      el.classList.add('bad'); icon.textContent='❌';
+      title.textContent='Poor RRR — Avoid this trade';
+      desc.textContent=`RRR is 1:${rrr.toFixed(2)}. Risk outweighs reward. Never trade below 1:1.`;
+    } else if (rrr < 2) {
+      el.classList.add('warning'); icon.textContent='⚠️';
+      title.textContent='Average RRR — Acceptable';
+      desc.textContent=`RRR is 1:${rrr.toFixed(2)}. Consider adjusting TP to reach at least 1:2.`;
+    } else {
+      el.classList.add('good'); icon.textContent='✅';
+      title.textContent='Excellent RRR — Take the trade';
+      desc.textContent=`RRR is 1:${rrr.toFixed(2)}. Strong setup with a solid reward edge.`;
+    }
+  }
+
+  function verdictRisk(pct) {
+    const el = document.getElementById('verdictRisk');
+    const icon  = document.getElementById('vRiskIcon');
+    const title = document.getElementById('vRiskTitle');
+    const desc  = document.getElementById('vRiskDesc');
+    el.className = 'verdict';
+    if (pct <= 0) { icon.textContent='⏳'; title.textContent='Awaiting input'; desc.textContent='Enter trade parameters.'; return; }
+    if (pct > 2) {
+      el.classList.add('bad'); icon.textContent='🔥';
+      title.textContent='High Risk — Reduce lot size';
+      desc.textContent=`Risking ${pct.toFixed(2)}% of balance. Cap at 2% max per trade.`;
+    } else if (pct > 1) {
+      el.classList.add('warning'); icon.textContent='⚠️';
+      title.textContent='Moderate Risk — Stay cautious';
+      desc.textContent=`${pct.toFixed(2)}% risk is manageable. Aim below 1% for professional discipline.`;
+    } else {
+      el.classList.add('good'); icon.textContent='🛡️';
+      title.textContent='Safe Risk — Well managed';
+      desc.textContent=`Only ${pct.toFixed(2)}% of balance at risk. Excellent capital management.`;
+    }
+  }
+
+  function set(id, val) { const el = document.getElementById(id); if(el) el.textContent = val; }
+
+  document.getElementById('tabs').addEventListener('click', e => {
+    if (!e.target.classList.contains('ftab')) return;
+    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.fpanel').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    document.getElementById(e.target.dataset.panel).classList.add('active');
+  });
+
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
+  });
+
+  calc();
+</script>
+</body>
+</html>
+
+<!---Ok but needed Improvements --!>
+
+<!-- <!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>XAUUSD Risk Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     /* ── THEME TOKENS ─────────────────────────────────────────── */
@@ -657,4 +1342,4 @@
   calc();
 </script>
 </body>
-</html>
+</html> -->
