@@ -4,46 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>XAUUSD Risk Dashboard</title>
+
+  <!-- ── FAVICON ── -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230C0D11'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23F5C842' opacity='.18'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23F5C842' opacity='.35'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%23F5C842'/%3E%3Ctext x='32' y='37' font-family='Arial' font-size='13' font-weight='900' fill='%230C0D11' text-anchor='middle'%3EXU%3C/text%3E%3C/svg%3E"/>
+  <meta name="description" content="XAUUSD Risk & RRR Calculator — Professional Trade Intelligence Dashboard"/>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
   <style>
     :root {
-      --gold:       #F5C842;
-      --gold-dim:   #C9A227;
-      --gold-glow:  rgba(245,200,66,.15);
-      --gold-ring:  rgba(245,200,66,.30);
-      --bg:         #0C0D11;
-      --surface:    #12141B;
-      --surface-2:  #191C26;
-      --surface-3:  #20243A;
-      --border:     rgba(255,255,255,.06);
-      --border-md:  rgba(255,255,255,.10);
-      --text:       #E6E8F2;
-      --text-muted: #787C9A;
-      --text-dim:   #44485F;
-      --green:      #27C97E;
-      --green-bg:   rgba(39,201,126,.11);
-      --green-bdr:  rgba(39,201,126,.22);
-      --amber:      #F0A020;
-      --amber-bg:   rgba(240,160,32,.11);
-      --amber-bdr:  rgba(240,160,32,.22);
-      --red:        #E04848;
-      --red-bg:     rgba(224,72,72,.11);
-      --red-bdr:    rgba(224,72,72,.22);
+      --gold:        #F5C842;
+      --gold-dim:    #C9A227;
+      --gold-glow:   rgba(245,200,66,.15);
+      --gold-ring:   rgba(245,200,66,.30);
+      --bg:          #0C0D11;
+      --surface:     #12141B;
+      --surface-2:   #191C26;
+      --surface-3:   #20243A;
+      --border:      rgba(255,255,255,.06);
+      --border-md:   rgba(255,255,255,.10);
+      --text:        #E6E8F2;
+      --text-muted:  #787C9A;
+      --text-dim:    #44485F;
+      --green:       #27C97E;
+      --green-bg:    rgba(39,201,126,.11);
+      --green-bdr:   rgba(39,201,126,.22);
+      --amber:       #F0A020;
+      --amber-bg:    rgba(240,160,32,.11);
+      --amber-bdr:   rgba(240,160,32,.22);
+      --red:         #E04848;
+      --red-bg:      rgba(224,72,72,.11);
+      --red-bdr:     rgba(224,72,72,.22);
+      --blue:        #4A9EFF;
+      --blue-bg:     rgba(74,158,255,.11);
+      --blue-bdr:    rgba(74,158,255,.22);
+      --purple:      #A78BFA;
+      --purple-bg:   rgba(167,139,250,.11);
+      --purple-bdr:  rgba(167,139,250,.22);
       --shadow-card: 0 2px 24px rgba(0,0,0,.5);
-      --radius:     12px;
-      --radius-sm:  8px;
-      --radius-xs:  5px;
+      --radius:      12px;
+      --radius-sm:   8px;
+      --radius-xs:   5px;
     }
     [data-theme="light"] {
-      --bg:         #EEF0F6;
-      --surface:    #FFFFFF;
-      --surface-2:  #F5F6FA;
-      --surface-3:  #EAECF4;
-      --border:     rgba(0,0,0,.07);
-      --border-md:  rgba(0,0,0,.12);
-      --text:       #12142A;
-      --text-muted: #636882;
-      --text-dim:   #A4A8C4;
+      --bg:          #EEF0F6;
+      --surface:     #FFFFFF;
+      --surface-2:   #F5F6FA;
+      --surface-3:   #EAECF4;
+      --border:      rgba(0,0,0,.07);
+      --border-md:   rgba(0,0,0,.12);
+      --text:        #12142A;
+      --text-muted:  #636882;
+      --text-dim:    #A4A8C4;
       --shadow-card: 0 2px 18px rgba(0,0,0,.08);
     }
 
@@ -58,13 +70,15 @@
     }
     body::before {
       content: ''; position: fixed; inset: 0;
-      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
       background-size: 44px 44px; pointer-events: none; z-index: 0;
     }
 
     .app { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 28px 20px 72px; }
 
-    /* HEADER */
+    /* ── HEADER ── */
     header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
     .brand { display: flex; align-items: center; gap: 13px; }
     .brand-icon {
@@ -92,11 +106,19 @@
     }
     .theme-btn:hover { border-color: var(--gold); color: var(--gold); }
 
-    .section-label { font-size: .62rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; padding-left: 1px; }
+    .section-label {
+      font-size: .62rem; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--text-dim);
+      margin-bottom: 10px; padding-left: 1px;
+    }
 
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-card); transition: background .3s, border-color .3s; margin-bottom: 16px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-card);
+      transition: background .3s, border-color .3s; margin-bottom: 16px;
+    }
 
-    /* DIRECTION */
+    /* ── DIRECTION ── */
     .dir-toggle { display: flex; gap: 8px; margin-bottom: 18px; }
     .dir-btn {
       flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--border-md);
@@ -107,13 +129,21 @@
     .dir-btn.active-long  { background: var(--green-bg); border-color: var(--green); color: var(--green); }
     .dir-btn.active-short { background: var(--red-bg);   border-color: var(--red);   color: var(--red); }
 
-    /* INPUT GRID */
+    /* ── INPUT GRID ── */
     .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-bottom: 20px; }
     @media (max-width: 520px) { .input-grid { grid-template-columns: 1fr; } }
     .input-group { display: flex; flex-direction: column; gap: 6px; }
-    .input-group label { font-size: .67rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+    .input-group label {
+      font-size: .67rem; font-weight: 600; letter-spacing: .05em;
+      text-transform: uppercase; color: var(--text-muted);
+      display: flex; align-items: center; gap: 5px;
+    }
     .input-wrap { position: relative; }
-    .input-wrap .prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--text-dim); pointer-events: none; }
+    .input-wrap .prefix {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      color: var(--text-dim); pointer-events: none;
+    }
     input[type="number"] {
       width: 100%; background: var(--surface-2); border: 1.5px solid var(--border-md);
       border-radius: var(--radius-sm); color: var(--text);
@@ -122,8 +152,11 @@
       transition: border-color .2s, box-shadow .2s, background .25s;
       -moz-appearance: textfield;
     }
-    input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-    input[type="number"]:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-ring); background: var(--surface-3); }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus {
+      border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-ring); background: var(--surface-3);
+    }
 
     .calc-btn {
       width: 100%; padding: 13px; border-radius: var(--radius-sm); border: none;
@@ -136,7 +169,7 @@
     .calc-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(245,200,66,.48); filter: brightness(1.05); }
     .calc-btn:active { transform: none; }
 
-    /* METRICS */
+    /* ── METRICS ── */
     .metrics-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 11px; margin-bottom: 16px; }
     @media (max-width: 580px) { .metrics-strip { grid-template-columns: 1fr 1fr; } }
     .metric-card {
@@ -145,13 +178,16 @@
       position: relative; overflow: hidden;
       transition: border-color .2s, transform .2s; box-shadow: var(--shadow-card);
     }
-    .metric-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.5px; background: var(--accent, var(--gold)); }
+    .metric-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 2.5px; background: var(--accent, var(--gold));
+    }
     .metric-card:hover   { transform: translateY(-2px); border-color: var(--accent, var(--gold)); }
     .metric-label { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
     .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 1.38rem; font-weight: 600; color: var(--accent, var(--gold)); line-height: 1; }
     .metric-sub   { font-size: .64rem; color: var(--text-dim); margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
 
-    /* GAUGE */
+    /* ── GAUGE ── */
     .gauge-section { margin-bottom: 18px; }
     .gauge-section:last-child { margin-bottom: 0; }
     .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
@@ -160,8 +196,11 @@
     .gauge-track  { height: 7px; background: var(--surface-3); border-radius: 100px; overflow: hidden; }
     .gauge-fill   { height: 100%; border-radius: 100px; transition: width .55s cubic-bezier(.34,1.4,.64,1), background .3s; }
 
-    /* RRR BAR */
-    .rrr-visual { display: flex; height: 30px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-md); margin-top: 9px; }
+    /* ── RRR BAR ── */
+    .rrr-visual {
+      display: flex; height: 30px; border-radius: var(--radius-sm);
+      overflow: hidden; border: 1px solid var(--border-md); margin-top: 9px;
+    }
     .rrr-risk-bar, .rrr-reward-bar {
       height: 100%; display: flex; align-items: center; justify-content: center;
       transition: width .5s ease; font-family: 'JetBrains Mono', monospace;
@@ -170,13 +209,17 @@
     .rrr-risk-bar   { background: rgba(224,72,72,.28);  color: var(--red); }
     .rrr-reward-bar { background: rgba(39,201,126,.28); color: var(--green); }
 
-    /* VERDICTS */
+    /* ── VERDICTS ── */
     .verdict-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
     @media (max-width: 480px) { .verdict-grid { grid-template-columns: 1fr; } }
-    .verdict { border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: flex-start; gap: 11px; border: 1px solid transparent; transition: all .25s; }
-    .verdict.good    { background: var(--green-bg); border-color: var(--green-bdr); }
-    .verdict.warning { background: var(--amber-bg); border-color: var(--amber-bdr); }
-    .verdict.bad     { background: var(--red-bg);   border-color: var(--red-bdr); }
+    .verdict {
+      border-radius: var(--radius-sm); padding: 14px 16px;
+      display: flex; align-items: flex-start; gap: 11px;
+      border: 1px solid transparent; transition: all .25s;
+    }
+    .verdict.good    { background: var(--green-bg);  border-color: var(--green-bdr); }
+    .verdict.warning { background: var(--amber-bg);  border-color: var(--amber-bdr); }
+    .verdict.bad     { background: var(--red-bg);    border-color: var(--red-bdr); }
     .verdict-icon  { font-size: 1.25rem; flex-shrink: 0; margin-top: 1px; }
     .verdict-title { font-size: .77rem; font-weight: 700; letter-spacing: .01em; }
     .verdict.good .verdict-title    { color: var(--green); }
@@ -184,20 +227,133 @@
     .verdict.bad .verdict-title     { color: var(--red); }
     .verdict-desc { font-size: .71rem; color: var(--text-muted); margin-top: 3px; line-height: 1.55; }
 
-    .tip-bar { display: flex; align-items: flex-start; gap: 10px; background: var(--gold-glow); border: 1px solid var(--gold-ring); border-radius: var(--radius-sm); padding: 11px 15px; margin-top: 14px; }
+    .tip-bar {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: var(--gold-glow); border: 1px solid var(--gold-ring);
+      border-radius: var(--radius-sm); padding: 11px 15px; margin-top: 14px;
+    }
     .tip-bar span { font-size: .75rem; color: var(--text-muted); line-height: 1.55; }
     .tip-bar strong { color: var(--gold); font-weight: 600; }
 
-    /* EXTENDED */
+    /* ── EXTENDED ── */
     .ext-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
     @media (max-width: 580px) { .ext-grid { grid-template-columns: 1fr 1fr; } }
     .ext-label { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
     .ext-value { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 500; color: var(--text); }
 
-    /* ── FORMULA GUIDE ── */
+    /* ════════════════════════════════════════════
+       LOT SIZE CALCULATOR TOOL
+    ════════════════════════════════════════════ */
+    .lot-tool-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+      padding-bottom: 16px; border-bottom: 1px solid var(--border-md);
+    }
+    .lot-tool-icon {
+      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--blue) 0%, #2563EB 100%);
+      display: grid; place-items: center; font-size: 20px;
+      box-shadow: 0 4px 16px rgba(74,158,255,.35);
+    }
+    .lot-tool-title { font-size: 1rem; font-weight: 700; letter-spacing: -.01em; }
+    .lot-tool-sub   { font-size: .7rem; color: var(--text-muted); margin-top: 2px; }
+
+    .lot-input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; margin-bottom: 18px; }
+    @media (max-width: 580px) { .lot-input-grid { grid-template-columns: 1fr; } }
+
+    .calc-btn-blue {
+      width: 100%; padding: 13px; border-radius: var(--radius-sm); border: none;
+      background: linear-gradient(135deg, var(--blue) 0%, #2563EB 100%);
+      color: #fff; font-family: 'Poppins', sans-serif;
+      font-size: .88rem; font-weight: 700; letter-spacing: .04em; cursor: pointer;
+      transition: transform .15s, box-shadow .15s, filter .15s;
+      box-shadow: 0 4px 18px rgba(74,158,255,.32);
+    }
+    .calc-btn-blue:hover  { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(74,158,255,.48); filter: brightness(1.1); }
+    .calc-btn-blue:active { transform: none; }
+
+    .lot-result-panel {
+      margin-top: 18px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-md); overflow: hidden;
+      transition: all .3s;
+    }
+    .lot-result-header {
+      background: var(--surface-2); padding: 13px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .lot-result-header span { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); }
+    .lot-result-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: .75rem; font-weight: 600;
+      padding: 3px 12px; border-radius: 100px;
+      background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-bdr);
+    }
+    .lot-result-body { padding: 18px 16px; }
+
+    .lot-metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+    @media (max-width: 520px) { .lot-metrics { grid-template-columns: 1fr; } }
+
+    .lot-metric {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px;
+      position: relative; overflow: hidden; text-align: center;
+    }
+    .lot-metric::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--m-color, var(--blue));
+    }
+    .lot-metric-label { font-size: .58rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .lot-metric-value {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 600;
+      color: var(--m-color, var(--blue));
+    }
+    .lot-metric-sub { font-size: .62rem; color: var(--text-dim); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+
+    .lot-breakdown {
+      background: var(--surface-2); border: 1px solid var(--border-md);
+      border-radius: var(--radius-sm); padding: 14px 16px;
+    }
+    .lot-breakdown-title {
+      font-size: .62rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+    }
+    .lot-step {
+      display: flex; align-items: baseline; gap: 8px;
+      padding: 5px 0; border-bottom: 1px solid var(--border);
+      font-size: .73rem;
+    }
+    .lot-step:last-child { border-bottom: none; padding-bottom: 0; }
+    .lot-step-num {
+      font-family: 'JetBrains Mono', monospace; font-size: .62rem;
+      font-weight: 600; color: var(--blue); background: var(--blue-bg);
+      border: 1px solid var(--blue-bdr); border-radius: 100px;
+      width: 20px; height: 20px; display: grid; place-items: center; flex-shrink: 0;
+    }
+    .lot-step-text { color: var(--text-muted); line-height: 1.5; flex: 1; }
+    .lot-step-text strong { color: var(--text); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+    .lot-micro-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 14px;
+    }
+    .micro-card {
+      background: var(--surface-3); border: 1px solid var(--border);
+      border-radius: var(--radius-xs); padding: 10px 12px; text-align: center;
+    }
+    .micro-label { font-size: .58rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+    .micro-value { font-family: 'JetBrains Mono', monospace; font-size: .9rem; font-weight: 600; color: var(--text); }
+
+    .lot-warning {
+      display: flex; align-items: flex-start; gap: 9px; margin-top: 12px;
+      background: var(--amber-bg); border: 1px solid var(--amber-bdr);
+      border-radius: var(--radius-xs); padding: 10px 12px;
+      font-size: .72rem; color: var(--amber); line-height: 1.5;
+    }
+
+    /* ════════════════════════════════════════════
+       FORMULA GUIDE TABS
+    ════════════════════════════════════════════ */
     .formula-tabs { display: flex; gap: 0; flex-wrap: wrap; border-bottom: 1px solid var(--border-md); }
     .ftab {
-      padding: 9px 18px; font-size: .72rem; font-weight: 600;
+      padding: 9px 16px; font-size: .70rem; font-weight: 600;
       color: var(--text-muted); cursor: pointer; border: none;
       background: transparent; border-bottom: 2px solid transparent;
       margin-bottom: -1px; transition: color .2s, border-color .2s;
@@ -209,11 +365,18 @@
     .fpanel        { display: none; padding-top: 20px; }
     .fpanel.active { display: block; }
 
-    .formula-block { background: var(--surface-2); border: 1px solid var(--border-md); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 12px; }
+    .formula-block {
+      background: var(--surface-2); border: 1px solid var(--border-md);
+      border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 12px;
+    }
     .formula-block:last-child { margin-bottom: 0; }
 
     .fb-header   { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .fb-icon     { width: 30px; height: 30px; border-radius: var(--radius-xs); background: var(--gold-glow); border: 1px solid var(--gold-ring); display: grid; place-items: center; font-size: .95rem; flex-shrink: 0; }
+    .fb-icon     {
+      width: 30px; height: 30px; border-radius: var(--radius-xs);
+      background: var(--gold-glow); border: 1px solid var(--gold-ring);
+      display: grid; place-items: center; font-size: .95rem; flex-shrink: 0;
+    }
     .fb-title    { font-size: .82rem; font-weight: 700; color: var(--text); }
     .fb-subtitle { font-size: .67rem; color: var(--text-muted); margin-top: 1px; }
 
@@ -227,29 +390,128 @@
     .fb-desc { font-size: .73rem; color: var(--text-muted); line-height: 1.65; }
 
     .var-table, .thresh-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .var-table th, .thresh-table th { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border-md); }
-    .var-table td, .thresh-table td { font-size: .72rem; padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-muted); }
+    .var-table th, .thresh-table th {
+      font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text-dim); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border-md);
+    }
+    .var-table td, .thresh-table td {
+      font-size: .72rem; padding: 7px 8px; border-bottom: 1px solid var(--border);
+      vertical-align: top; color: var(--text-muted);
+    }
     .var-table tr:last-child td, .thresh-table tr:last-child td { border-bottom: none; }
     .var-name { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--gold) !important; white-space: nowrap; }
 
     .badge { display: inline-block; padding: 2px 9px; border-radius: 100px; font-size: .62rem; font-weight: 700; letter-spacing: .04em; }
-    .badge-good    { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bdr); }
-    .badge-warning { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bdr); }
-    .badge-bad     { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-bdr); }
+    .badge-good    { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-bdr); }
+    .badge-warning { background: var(--amber-bg);  color: var(--amber);  border: 1px solid var(--amber-bdr); }
+    .badge-bad     { background: var(--red-bg);    color: var(--red);    border: 1px solid var(--red-bdr); }
+    .badge-blue    { background: var(--blue-bg);   color: var(--blue);   border: 1px solid var(--blue-bdr); }
+    .badge-purple  { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-bdr); }
 
-    .note-box { background: var(--surface-3); border-left: 3px solid var(--gold); border-radius: 0 var(--radius-xs) var(--radius-xs) 0; padding: 10px 14px; margin-top: 12px; font-size: .72rem; color: var(--text-muted); line-height: 1.6; }
+    .note-box {
+      background: var(--surface-3); border-left: 3px solid var(--gold);
+      border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+      padding: 10px 14px; margin-top: 12px; font-size: .72rem;
+      color: var(--text-muted); line-height: 1.6;
+    }
     .note-box strong { color: var(--gold); font-weight: 600; }
+    .note-box.blue-note  { border-left-color: var(--blue); }
+    .note-box.blue-note strong  { color: var(--blue); }
+    .note-box.red-note   { border-left-color: var(--red); }
+    .note-box.red-note strong   { color: var(--red); }
+    .note-box.green-note { border-left-color: var(--green); }
+    .note-box.green-note strong { color: var(--green); }
+
+    /* ── TIMEFRAME TABLE ── */
+    .tf-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+    .tf-row {
+      display: flex; align-items: center; gap: 0;
+      border: 1px solid var(--border-md); border-radius: var(--radius-sm);
+      overflow: hidden; transition: border-color .2s, transform .15s;
+    }
+    .tf-row:hover { transform: translateX(3px); border-color: var(--tf-color, var(--gold)); }
+
+    .tf-badge {
+      padding: 14px 18px; min-width: 90px; text-align: center;
+      background: var(--tf-bg, var(--gold-glow));
+      border-right: 1px solid var(--border-md); flex-shrink: 0;
+    }
+    .tf-badge-label {
+      font-family: 'JetBrains Mono', monospace; font-size: .95rem; font-weight: 700;
+      color: var(--tf-color, var(--gold)); line-height: 1;
+    }
+    .tf-badge-sub { font-size: .58rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); margin-top: 3px; }
+
+    .tf-body { padding: 12px 16px; flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .tf-target { display: flex; flex-direction: column; gap: 3px; }
+    .tf-target-label { font-size: .58rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+    .tf-target-val { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 700; color: var(--tf-color, var(--gold)); }
+
+    .tf-action { display: flex; flex-direction: column; gap: 3px; text-align: right; }
+    .tf-action-label { font-size: .58rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+    .tf-action-val { font-size: .72rem; font-weight: 600; color: var(--text-muted); }
+
+    .tf-bar-wrap { flex-basis: 100%; margin-top: 4px; }
+    .tf-bar-track { height: 4px; background: var(--surface-3); border-radius: 100px; overflow: hidden; }
+    .tf-bar-fill { height: 100%; border-radius: 100px; background: var(--tf-color, var(--gold)); opacity: .6; }
+
+    .partial-close-card {
+      background: linear-gradient(135deg, var(--green-bg) 0%, var(--gold-glow) 100%);
+      border: 1px solid var(--green-bdr); border-radius: var(--radius-sm);
+      padding: 16px 18px; margin-bottom: 14px;
+    }
+    .partial-close-title {
+      font-size: .82rem; font-weight: 700; color: var(--green); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .partial-close-body { font-size: .73rem; color: var(--text-muted); line-height: 1.7; }
+    .partial-close-body strong { color: var(--text); font-weight: 600; }
+
+    .warning-card {
+      background: var(--red-bg); border: 1px solid var(--red-bdr);
+      border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 14px;
+    }
+    .warning-card-title {
+      font-size: .78rem; font-weight: 700; color: var(--red); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .warning-card-body { font-size: .72rem; color: var(--text-muted); line-height: 1.6; }
+    .warning-card-body strong { color: var(--red); font-weight: 600; }
+
+    .vsa-badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .vsa-badge {
+      padding: 5px 14px; border-radius: 100px; font-size: .68rem; font-weight: 700;
+      letter-spacing: .05em; background: var(--purple-bg); color: var(--purple);
+      border: 1px solid var(--purple-bdr);
+    }
+
+    /* ── SEPARATOR ── */
+    .tool-divider {
+      display: flex; align-items: center; gap: 14px; margin: 28px 0 20px;
+    }
+    .tool-divider::before, .tool-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border-md);
+    }
+    .tool-divider span {
+      font-size: .62rem; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--text-dim); white-space: nowrap;
+    }
 
     @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
     .card, .metric-card { animation: fadeUp .38s ease both; }
     .metric-card:nth-child(2){animation-delay:.05s}
     .metric-card:nth-child(3){animation-delay:.10s}
     .metric-card:nth-child(4){animation-delay:.15s}
+
+    @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .lot-result-panel { animation: slideIn .35s ease both; }
   </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- ══ HEADER ══ -->
   <header>
     <div class="brand">
       <div class="brand-icon">⚡</div>
@@ -264,7 +526,7 @@
     </div>
   </header>
 
-  <!-- INPUTS -->
+  <!-- ══ TRADE PARAMETERS ══ -->
   <div class="section-label">Trade Parameters</div>
   <div class="card">
     <div class="dir-toggle">
@@ -293,10 +555,10 @@
         <div class="input-wrap"><span class="prefix">$</span><input type="number" id="tp" value="2010" step="0.01" oninput="calc()"/></div>
       </div>
     </div>
-    <button class="calc-btn" onclick="calc()">⚡ Calculate Risk & Reward</button>
+    <button class="calc-btn" onclick="calc()">⚡ Calculate Risk &amp; Reward</button>
   </div>
 
-  <!-- METRICS -->
+  <!-- ══ RESULTS OVERVIEW ══ -->
   <div class="section-label">Results Overview</div>
   <div class="metrics-strip">
     <div class="metric-card" style="--accent:var(--red)">
@@ -321,7 +583,7 @@
     </div>
   </div>
 
-  <!-- VISUAL -->
+  <!-- ══ VISUAL GAUGES ══ -->
   <div class="card">
     <div class="gauge-section">
       <div class="gauge-header">
@@ -342,7 +604,7 @@
     </div>
   </div>
 
-  <!-- VERDICTS -->
+  <!-- ══ TRADE QUALITY ══ -->
   <div class="section-label">Trade Quality Check</div>
   <div class="card">
     <div class="verdict-grid">
@@ -367,7 +629,7 @@
     </div>
   </div>
 
-  <!-- EXTENDED STATS -->
+  <!-- ══ EXTENDED STATS ══ -->
   <div class="section-label">Extended Stats</div>
   <div class="card">
     <div class="ext-grid">
@@ -378,82 +640,178 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- FORMULA GUIDE                                           -->
-  <!-- ════════════════════════════════════════════════════════ -->
-  <div class="section-label" style="margin-top:8px;">Formula &amp; Calculation Guide</div>
+  <!-- ════════════════════════════════════════════
+       TOOL: LOT SIZE FROM SL IN PIPS
+  ════════════════════════════════════════════ -->
+  <div class="tool-divider"><span>Smart Position Sizing Tool</span></div>
+
+  <div class="section-label">Lot Size Calculator — From SL in Pips</div>
+  <div class="card">
+    <div class="lot-tool-header">
+      <div class="lot-tool-icon">🎯</div>
+      <div>
+        <div class="lot-tool-title">Smart Lot Size from Stop Loss</div>
+        <div class="lot-tool-sub">Enter your account size, risk %, and SL in pips → get the exact lot size</div>
+      </div>
+    </div>
+
+    <div class="lot-input-grid">
+      <div class="input-group">
+        <label>💰 Account Balance</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="ls-balance" value="570" min="0" step="100" oninput="calcLot()"/>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>⚠️ Risk Percentage</label>
+        <div class="input-wrap">
+          <span class="prefix">%</span>
+          <input type="number" id="ls-risk-pct" value="3" min="0.1" max="10" step="0.1" oninput="calcLot()"/>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>🛑 Stop Loss (Pips)</label>
+        <div class="input-wrap">
+          <span class="prefix">P</span>
+          <input type="number" id="ls-sl-pips" value="45" min="1" step="1" oninput="calcLot()"/>
+        </div>
+      </div>
+    </div>
+
+    <button class="calc-btn-blue" onclick="calcLot()">🎯 Calculate Optimal Lot Size</button>
+
+    <div class="lot-result-panel" id="lotResultPanel">
+      <div class="lot-result-header">
+        <span>Position Sizing Result</span>
+        <span class="lot-result-badge" id="lotResultBadge">CALCULATING…</span>
+      </div>
+      <div class="lot-result-body">
+
+        <div class="lot-metrics">
+          <div class="lot-metric" style="--m-color:var(--amber)">
+            <div class="lot-metric-label">Max Risk $</div>
+            <div class="lot-metric-value" id="ls-out-riskd">—</div>
+            <div class="lot-metric-sub" id="ls-out-riskpct">— % of balance</div>
+          </div>
+          <div class="lot-metric" style="--m-color:var(--blue)">
+            <div class="lot-metric-label">Exact Lot Size</div>
+            <div class="lot-metric-value" id="ls-out-exact">—</div>
+            <div class="lot-metric-sub">raw calculation</div>
+          </div>
+          <div class="lot-metric" style="--m-color:var(--green)">
+            <div class="lot-metric-label">Rounded Lot</div>
+            <div class="lot-metric-value" id="ls-out-rounded">—</div>
+            <div class="lot-metric-sub" id="ls-out-type">micro lot</div>
+          </div>
+        </div>
+
+        <div class="lot-breakdown">
+          <div class="lot-breakdown-title">Step-by-Step Calculation</div>
+          <div class="lot-step">
+            <div class="lot-step-num">1</div>
+            <div class="lot-step-text" id="ls-step1">—</div>
+          </div>
+          <div class="lot-step">
+            <div class="lot-step-num">2</div>
+            <div class="lot-step-text" id="ls-step2">—</div>
+          </div>
+          <div class="lot-step">
+            <div class="lot-step-num">3</div>
+            <div class="lot-step-text" id="ls-step3">—</div>
+          </div>
+          <div class="lot-step">
+            <div class="lot-step-num">4</div>
+            <div class="lot-step-text" id="ls-step4">—</div>
+          </div>
+        </div>
+
+        <div class="lot-micro-grid">
+          <div class="micro-card">
+            <div class="micro-label">Standard Lots</div>
+            <div class="micro-value" id="ls-std">—</div>
+          </div>
+          <div class="micro-card">
+            <div class="micro-label">Mini Lots</div>
+            <div class="micro-value" id="ls-mini">—</div>
+          </div>
+          <div class="micro-card">
+            <div class="micro-label">Micro Lots</div>
+            <div class="micro-value" id="ls-micro">—</div>
+          </div>
+        </div>
+
+        <div class="lot-warning" id="lotWarning" style="display:none">
+          <span>⚠️</span>
+          <span id="lotWarningText">—</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       FORMULA & CALCULATION GUIDE
+  ════════════════════════════════════════════ -->
+  <div class="tool-divider"><span>Formula &amp; Calculation Guide</span></div>
+
+  <div class="section-label">Reference Library</div>
   <div class="card" style="padding:0; overflow:hidden;">
     <div style="padding:0 22px;">
       <div class="formula-tabs" id="tabs">
-        <button class="ftab active" data-panel="p-core">Core Formulas</button>
-        <button class="ftab" data-panel="p-pip">Pip &amp; Lot Sizes</button>
-        <button class="ftab" data-panel="p-thresholds">Thresholds</button>
-        <button class="ftab" data-panel="p-example">Worked Example</button>
+        <button class="ftab active"  data-panel="p-core">Core Formulas</button>
+        <button class="ftab"         data-panel="p-pip">Pip &amp; Lot Sizes</button>
+        <button class="ftab"         data-panel="p-thresholds">Thresholds</button>
+        <button class="ftab"         data-panel="p-example">Worked Example</button>
+        <button class="ftab"         data-panel="p-timeframe">⏱ Timeframe Targets</button>
       </div>
     </div>
     <div style="padding:0 22px 22px;">
 
-      <!-- CORE -->
+      <!-- ── TAB 1: CORE FORMULAS ── -->
       <div class="fpanel active" id="p-core">
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">📏</div><div><div class="fb-title">Risk Points &amp; Reward Points</div><div class="fb-subtitle">Distance from entry to SL / TP in price units</div></div></div>
           <div class="formula-eq">Risk Points   = |Entry − Stop Loss|
 Reward Points = |Take Profit − Entry|</div>
-          <div class="fb-desc">Absolute value is used so the formula works for both LONG and SHORT trades. For LONG: Entry &gt; SL and TP &gt; Entry. For SHORT: Entry &lt; SL and TP &lt; Entry.</div>
+          <div class="fb-desc">Absolute value so the formula works for both LONG and SHORT. For LONG: Entry &gt; SL and TP &gt; Entry. For SHORT: Entry &lt; SL and TP &lt; Entry.</div>
           <table class="var-table">
             <tr><th>Variable</th><th>Meaning</th></tr>
-            <tr><td class="var-name">Entry</td><td>Your trade open price (e.g. 2000.00)</td></tr>
-            <tr><td class="var-name">SL</td><td>Stop Loss — where you exit if the trade moves against you</td></tr>
-            <tr><td class="var-name">TP</td><td>Take Profit — your target exit where you lock in profit</td></tr>
+            <tr><td class="var-name">Entry</td><td>Trade open price (e.g. 2000.00)</td></tr>
+            <tr><td class="var-name">SL</td><td>Stop Loss — exit point if trade moves against you</td></tr>
+            <tr><td class="var-name">TP</td><td>Take Profit — target exit to lock in profit</td></tr>
           </table>
         </div>
 
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">💵</div><div><div class="fb-title">Risk in Dollars &amp; Reward in Dollars</div><div class="fb-subtitle">Monetary value of your risk and potential gain</div></div></div>
+          <div class="fb-header"><div class="fb-icon">💵</div><div><div class="fb-title">Risk &amp; Reward in Dollars</div><div class="fb-subtitle">Monetary value of your risk and potential gain</div></div></div>
           <div class="formula-eq">Risk ($)   = Risk Points   × Lot Size × 100
 Reward ($) = Reward Points × Lot Size × 100</div>
-          <div class="fb-desc">For XAUUSD, 1 standard lot = 100 oz of gold. A $1.00 price move on 1 standard lot = $100 P&amp;L. So the multiplier is <strong style="color:var(--gold)">Lot Size × 100</strong>, giving dollar value per point.</div>
+          <div class="fb-desc">For XAUUSD, 1 standard lot = 100 oz of gold. A $1 price move on 1 standard lot = $100 P&amp;L. Multiplier is <strong style="color:var(--gold)">Lot Size × 100</strong>.</div>
           <table class="var-table">
             <tr><th>Variable</th><th>Meaning</th></tr>
-            <tr><td class="var-name">Lot Size</td><td>Number of lots traded (0.01 = micro, 0.10 = mini, 1.00 = standard)</td></tr>
-            <tr><td class="var-name">× 100</td><td>XAUUSD contract = 100 oz/lot → $100 per full point per standard lot</td></tr>
+            <tr><td class="var-name">Lot Size</td><td>0.01 = micro, 0.10 = mini, 1.00 = standard</td></tr>
+            <tr><td class="var-name">× 100</td><td>XAUUSD = 100 oz/lot → $100 per full point per standard lot</td></tr>
           </table>
-          <div class="note-box"><strong>Example:</strong> 5 risk points × 0.01 lot × 100 = <strong>$5.00 at risk</strong>. The same move on 0.10 lot = $50 at risk.</div>
+          <div class="note-box"><strong>Example:</strong> 5 pts × 0.01 lot × 100 = <strong>$5.00 at risk</strong>. Same move on 0.10 lot = $50 at risk.</div>
         </div>
 
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">📊</div><div><div class="fb-title">Risk Percentage</div><div class="fb-subtitle">Portion of your account balance being risked</div></div></div>
+          <div class="fb-header"><div class="fb-icon">📊</div><div><div class="fb-title">Risk Percentage</div><div class="fb-subtitle">Portion of account balance being risked</div></div></div>
           <div class="formula-eq">Risk (%) = ( Risk ($) ÷ Account Balance ) × 100</div>
-          <div class="fb-desc">This tells you what fraction of your trading capital is at stake on this single trade. Professional traders treat this as the single most important number — it governs long-term survival.</div>
-          <table class="var-table">
-            <tr><th>Variable</th><th>Meaning</th></tr>
-            <tr><td class="var-name">Risk ($)</td><td>Dollar loss if SL is hit (calculated from formula above)</td></tr>
-            <tr><td class="var-name">Balance</td><td>Your current account equity in USD</td></tr>
-          </table>
+          <div class="fb-desc">What fraction of your capital is at stake on this trade. Professional traders consider this the most important number — it governs long-term survival.</div>
         </div>
 
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">⚖️</div><div><div class="fb-title">Risk-to-Reward Ratio (RRR)</div><div class="fb-subtitle">How much you gain vs. how much you risk per trade</div></div></div>
-          <div class="formula-eq">RRR = Reward ($) ÷ Risk ($)
-    → expressed as  1 : RRR</div>
-          <div class="fb-desc">A RRR of 2.0 means "for every $1 risked, you stand to make $2." Always expressed with Risk as 1, so RRR = 2.5 is written as 1 : 2.5.</div>
-          <div class="note-box"><strong>Why it matters:</strong> With 1:2 RRR you only need to be right <strong>34%</strong> of the time to break even. With 1:3 that drops to <strong>25%</strong>. Higher RRR = more room to be wrong.</div>
-        </div>
-
-        <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">📐</div><div><div class="fb-title">Dollar Value per Point (Pip Value)</div><div class="fb-subtitle">How much a $1 price move is worth at your lot size</div></div></div>
-          <div class="formula-eq">$ per Point = Lot Size × 100</div>
-          <div class="fb-desc">Gold is quoted in USD per troy ounce. 1 standard lot = 100 oz, so a $1 price change = $100 P&amp;L. Scale linearly with lot size.</div>
-          <table class="var-table">
-            <tr><th>Lot Size</th><th>Type</th><th>$ per Point</th></tr>
-            <tr><td class="var-name">1.00</td><td>Standard Lot</td><td>$100.00</td></tr>
-            <tr><td class="var-name">0.10</td><td>Mini Lot</td><td>$10.00</td></tr>
-            <tr><td class="var-name">0.01</td><td>Micro Lot</td><td>$1.00</td></tr>
-          </table>
+          <div class="fb-header"><div class="fb-icon">⚖️</div><div><div class="fb-title">Risk-to-Reward Ratio (RRR)</div><div class="fb-subtitle">How much you gain vs how much you risk per trade</div></div></div>
+          <div class="formula-eq">RRR = Reward ($) ÷ Risk ($)   →  expressed as  1 : RRR</div>
+          <div class="fb-desc">RRR of 2.0 means "for every $1 risked, you stand to make $2." Always expressed with Risk as 1.</div>
+          <div class="note-box"><strong>Why it matters:</strong> With 1:2 RRR you only need to win <strong>34%</strong> of trades to break even. With 1:3 that drops to <strong>25%</strong>.</div>
         </div>
       </div>
 
-      <!-- PIP & LOT -->
+      <!-- ── TAB 2: PIP & LOT ── -->
       <div class="fpanel" id="p-pip">
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">📦</div><div><div class="fb-title">Lot Size Contract Sizes</div><div class="fb-subtitle">Standard contract sizes in XAUUSD</div></div></div>
@@ -473,25 +831,23 @@ Reward ($) = Reward Points × Lot Size × 100</div>
           <div class="formula-eq">Max Risk ($)  = Account Balance × (Risk % ÷ 100)
 
 Lot Size = Max Risk ($) ÷ (Risk Points × 100)</div>
-          <div class="fb-desc">Use this to position-size correctly. Decide your risk % first, then solve for lot size — never the other way around. This keeps risk consistent regardless of SL distance.</div>
-          <div class="note-box"><strong>Example:</strong> $5,000 balance · 1% risk · 15-point SL<br>Max Risk = $5,000 × 0.01 = <strong>$50</strong><br>Lot Size = $50 ÷ (15 × 100) = <strong>0.033 lots</strong></div>
+          <div class="fb-desc">Decide your risk % first, then solve for lot size — never the other way around.</div>
+          <div class="note-box"><strong>Example:</strong> $5,000 · 1% risk · 15-pt SL → Max Risk = $50 → Lot = 50 ÷ 1500 = <strong>0.033 lots</strong></div>
         </div>
 
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">💱</div><div><div class="fb-title">Points vs Pips in XAUUSD</div><div class="fb-subtitle">Terminology used throughout this calculator</div></div></div>
-          <div class="formula-eq">1 Point = $1.00 price change in XAUUSD
-         (e.g. 2000.00 → 2001.00 = 1 point)
-
-1 Pip   = 0.01 price change (2nd decimal place)
-         (e.g. 2000.00 → 2000.01 = 1 pip = 0.01 points)</div>
-          <div class="fb-desc">This calculator uses <strong style="color:var(--gold)">points</strong> (whole dollar moves) as the base unit since SL and TP are typically set in whole increments for gold. Some brokers display gold in "pips" (0.01) — divide by 100 to convert to points.</div>
+          <div class="fb-header"><div class="fb-icon">💱</div><div><div class="fb-title">Points vs Pips in XAUUSD</div></div></div>
+          <div class="formula-eq">1 Point = $1.00 price change  (2000.00 → 2001.00)
+1 Pip   = $0.01 price change  (2000.00 → 2000.01)
+1 Point = 100 Pips</div>
+          <div class="fb-desc">This calculator uses <strong style="color:var(--gold)">points</strong> for the RRR tool. The Lot Sizing Tool above uses <strong style="color:var(--blue)">pips</strong>. 45 pips = 0.45 points. To convert: divide pips by 100.</div>
         </div>
       </div>
 
-      <!-- THRESHOLDS -->
+      <!-- ── TAB 3: THRESHOLDS ── -->
       <div class="fpanel" id="p-thresholds">
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">⚖️</div><div><div class="fb-title">RRR Threshold Table</div><div class="fb-subtitle">How this dashboard classifies your ratio</div></div></div>
+          <div class="fb-header"><div class="fb-icon">⚖️</div><div><div class="fb-title">RRR Threshold Table</div></div></div>
           <table class="thresh-table">
             <tr><th>RRR Range</th><th>Rating</th><th>Break-even Win Rate</th><th>Verdict</th></tr>
             <tr><td>Below 1:1</td><td><span class="badge badge-bad">BAD</span></td><td>Above 50%</td><td style="color:var(--red)">Avoid — reward &lt; risk</td></tr>
@@ -499,26 +855,26 @@ Lot Size = Max Risk ($) ÷ (Risk Points × 100)</div>
             <tr><td>1:2 – 1:2.99</td><td><span class="badge badge-good">GOOD</span></td><td>25% – 33%</td><td style="color:var(--green)">Professional standard</td></tr>
             <tr><td>1:3 and above</td><td><span class="badge badge-good">EXCELLENT</span></td><td>Below 25%</td><td style="color:var(--green)">High edge setups</td></tr>
           </table>
-          <div class="note-box"><strong>Break-even win rate formula:</strong> Win Rate (%) = 1 ÷ (1 + RRR) × 100<br>At 1:2 RRR → 1 ÷ 3 × 100 = <strong>33.3%</strong> — you can lose 2 trades out of 3 and still not lose money.</div>
+          <div class="note-box"><strong>Break-even formula:</strong> Win Rate (%) = 1 ÷ (1 + RRR) × 100. At 1:2 RRR → <strong>33.3%</strong></div>
         </div>
 
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">🛡️</div><div><div class="fb-title">Risk % Threshold Table</div><div class="fb-subtitle">Standard money management rules used by professionals</div></div></div>
+          <div class="fb-header"><div class="fb-icon">🛡️</div><div><div class="fb-title">Risk % Threshold Table</div></div></div>
           <table class="thresh-table">
             <tr><th>Risk %</th><th>Rating</th><th>Typical User</th><th>Verdict</th></tr>
-            <tr><td>≤ 0.5%</td><td><span class="badge badge-good">SAFE</span></td><td>Conservative / fund manager</td><td style="color:var(--green)">Highly protected capital</td></tr>
-            <tr><td>0.5% – 1%</td><td><span class="badge badge-good">SAFE</span></td><td>Professional retail trader</td><td style="color:var(--green)">Standard professional risk</td></tr>
-            <tr><td>1% – 2%</td><td><span class="badge badge-warning">MODERATE</span></td><td>Intermediate trader</td><td style="color:var(--amber)">Manageable — stay alert</td></tr>
+            <tr><td>≤ 0.5%</td><td><span class="badge badge-good">SAFE</span></td><td>Conservative</td><td style="color:var(--green)">Highly protected</td></tr>
+            <tr><td>0.5% – 1%</td><td><span class="badge badge-good">SAFE</span></td><td>Professional</td><td style="color:var(--green)">Standard professional</td></tr>
+            <tr><td>1% – 2%</td><td><span class="badge badge-warning">MODERATE</span></td><td>Intermediate</td><td style="color:var(--amber)">Manageable — stay alert</td></tr>
             <tr><td>Above 2%</td><td><span class="badge badge-bad">HIGH</span></td><td>Over-leveraged</td><td style="color:var(--red)">Dangerous — reduce size</td></tr>
           </table>
-          <div class="note-box"><strong>The 2% Rule compounded:</strong> Risking 2% per trade after 10 consecutive losses leaves you at <strong>81.7%</strong> of original balance. At 10% risk per trade, 10 losses destroys <strong>65%</strong> of your account.</div>
+          <div class="note-box"><strong>The 2% Rule compounded:</strong> 10 consecutive losses at 2% risk → you still have <strong>81.7%</strong> of balance. At 10% risk per trade → <strong>65%</strong> is gone.</div>
         </div>
       </div>
 
-      <!-- WORKED EXAMPLE -->
+      <!-- ── TAB 4: WORKED EXAMPLE ── -->
       <div class="fpanel" id="p-example">
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">📖</div><div><div class="fb-title">Full Worked Example</div><div class="fb-subtitle">Step-by-step using the default values in this calculator</div></div></div>
+          <div class="fb-header"><div class="fb-icon">📖</div><div><div class="fb-title">Full Worked Example</div><div class="fb-subtitle">Step-by-step using the default values</div></div></div>
           <div class="formula-eq">Given:
   Account Balance  =  $1,000.00
   Lot Size         =  0.01
@@ -526,53 +882,340 @@ Lot Size = Max Risk ($) ÷ (Risk Points × 100)</div>
   Stop Loss (SL)   =  1995.00
   Take Profit (TP) =  2010.00</div>
         </div>
-
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">1️⃣</div><div><div class="fb-title">Step 1 — Calculate Points</div></div></div>
           <div class="formula-eq">Risk Points   = |2000.00 − 1995.00| =  5.00 pts
 Reward Points = |2010.00 − 2000.00| = 10.00 pts</div>
         </div>
-
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">2️⃣</div><div><div class="fb-title">Step 2 — Dollar Value per Point</div></div></div>
           <div class="formula-eq">$ per Point = 0.01 lot × 100 = $1.00 per point</div>
         </div>
-
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">3️⃣</div><div><div class="fb-title">Step 3 — Risk &amp; Reward in Dollars</div></div></div>
           <div class="formula-eq">Risk ($)   =  5.00 pts × $1.00/pt =  $5.00
 Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
         </div>
-
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">4️⃣</div><div><div class="fb-title">Step 4 — Risk Percentage</div></div></div>
           <div class="formula-eq">Risk (%) = ($5.00 ÷ $1,000.00) × 100 = 0.50%</div>
-          <div class="fb-desc" style="color:var(--green);">✅ 0.50% — within the professional safe zone (below 1%)</div>
+          <div class="fb-desc" style="color:var(--green)">✅ 0.50% — professional safe zone</div>
         </div>
-
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">5️⃣</div><div><div class="fb-title">Step 5 — Risk-to-Reward Ratio</div></div></div>
           <div class="formula-eq">RRR = $10.00 ÷ $5.00 = 2.00  →  1 : 2.00</div>
-          <div class="fb-desc" style="color:var(--green);">✅ 1:2 — meets the professional minimum (good trade)</div>
-          <div class="note-box"><strong>Final verdict:</strong> This trade risks $5 to make $10 (1:2 RRR), using only 0.50% of the $1,000 account. Break-even win rate = 33.3%. This is a <strong>well-structured, low-risk trade</strong> that aligns with professional standards.</div>
+          <div class="fb-desc" style="color:var(--green)">✅ 1:2 — meets the professional minimum</div>
+          <div class="note-box"><strong>Final verdict:</strong> Risk $5 to make $10. Only 0.50% of capital at risk. Break-even win rate = 33.3%. A <strong>well-structured, low-risk trade</strong>.</div>
         </div>
       </div>
+
+      <!-- ── TAB 5: TIMEFRAME TARGETS ── -->
+      <div class="fpanel" id="p-timeframe">
+
+        <div class="vsa-badge-row">
+          <span class="vsa-badge">📊 VSA Method</span>
+          <span class="vsa-badge">🎯 High Probability Setups</span>
+          <span class="vsa-badge">📈 80–90% Win Rate</span>
+          <span class="vsa-badge">🔗 Trend-Following</span>
+        </div>
+
+        <div class="partial-close-card">
+          <div class="partial-close-title">
+            <span>🏹</span> The VSA Partial-Close Strategy
+          </div>
+          <div class="partial-close-body">
+            In VSA (Volume Spread Analysis) we work with <strong>high-probability, trend-aligned setups</strong> that carry an 80–90% win rate. Because the edge is so strong, you may take up to <strong>4% risk</strong> on these setups instead of the usual 1–2%.
+            <br/><br/>
+            When price hits your first target (see table below):
+            <br/>
+            → <strong>Close 80% of your position</strong> — locking in 3% profit and making the trade risk-free.<br/>
+            → <strong>Move SL to Entry</strong> — the remaining 20% now rides for free.<br/>
+            → <strong>Let the remaining 1% run</strong> toward the previous High (bullish) or previous Low (bearish).<br/>
+            <br/>
+            This way you always bank profit, yet still participate in the full trend move with zero further risk.
+          </div>
+        </div>
+
+        <div class="formula-block" style="margin-bottom:14px;">
+          <div class="fb-header"><div class="fb-icon">📐</div><div><div class="fb-title">Partial Close Formula</div><div class="fb-subtitle">How to size each portion</div></div></div>
+          <div class="formula-eq">Total Risk     =  4% of Account
+First TP Hit  →  Close 80% of position  (lock 3% profit)
+Remaining 20% →  SL moved to Entry      (risk-free runner)
+Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
+        </div>
+
+        <div class="section-label" style="margin-top:4px; margin-bottom:10px;">Timeframe Target Reference Table</div>
+
+        <div class="tf-grid">
+
+          <!-- 1 min -->
+          <div class="tf-row" style="--tf-color:#F5C842; --tf-bg:rgba(245,200,66,.09);">
+            <div class="tf-badge" style="background:rgba(245,200,66,.09);">
+              <div class="tf-badge-label" style="color:#F5C842;">1 min</div>
+              <div class="tf-badge-sub">Scalp</div>
+            </div>
+            <div class="tf-body">
+              <div class="tf-target">
+                <div class="tf-target-label">First TP Target</div>
+                <div class="tf-target-val" style="color:#F5C842;">15 pips</div>
+              </div>
+              <div class="tf-action">
+                <div class="tf-action-label">Action at Target</div>
+                <div class="tf-action-val">Close 80% · Move SL to Entry</div>
+              </div>
+              <div class="tf-bar-wrap">
+                <div class="tf-bar-track"><div class="tf-bar-fill" style="width:7.5%; background:#F5C842;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 min -->
+          <div class="tf-row" style="--tf-color:#F0A020; --tf-bg:rgba(240,160,32,.09);">
+            <div class="tf-badge" style="background:rgba(240,160,32,.09);">
+              <div class="tf-badge-label" style="color:#F0A020;">3 min</div>
+              <div class="tf-badge-sub">Scalp+</div>
+            </div>
+            <div class="tf-body">
+              <div class="tf-target">
+                <div class="tf-target-label">First TP Target</div>
+                <div class="tf-target-val" style="color:#F0A020;">20 pips</div>
+              </div>
+              <div class="tf-action">
+                <div class="tf-action-label">Action at Target</div>
+                <div class="tf-action-val">Close 80% · Move SL to Entry</div>
+              </div>
+              <div class="tf-bar-wrap">
+                <div class="tf-bar-track"><div class="tf-bar-fill" style="width:10%; background:#F0A020;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 min -->
+          <div class="tf-row" style="--tf-color:#4A9EFF; --tf-bg:rgba(74,158,255,.09);">
+            <div class="tf-badge" style="background:rgba(74,158,255,.09);">
+              <div class="tf-badge-label" style="color:#4A9EFF;">5 min</div>
+              <div class="tf-badge-sub">Short-term</div>
+            </div>
+            <div class="tf-body">
+              <div class="tf-target">
+                <div class="tf-target-label">First TP Target</div>
+                <div class="tf-target-val" style="color:#4A9EFF;">25–30 pips</div>
+              </div>
+              <div class="tf-action">
+                <div class="tf-action-label">Action at Target</div>
+                <div class="tf-action-val">Close 80% · Move SL to Entry</div>
+              </div>
+              <div class="tf-bar-wrap">
+                <div class="tf-bar-track"><div class="tf-bar-fill" style="width:14%; background:#4A9EFF;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 15 min -->
+          <div class="tf-row" style="--tf-color:#27C97E; --tf-bg:rgba(39,201,126,.09);">
+            <div class="tf-badge" style="background:rgba(39,201,126,.09);">
+              <div class="tf-badge-label" style="color:#27C97E;">15 min</div>
+              <div class="tf-badge-sub">Intraday</div>
+            </div>
+            <div class="tf-body">
+              <div class="tf-target">
+                <div class="tf-target-label">First TP Target</div>
+                <div class="tf-target-val" style="color:#27C97E;">35–40 pips</div>
+              </div>
+              <div class="tf-action">
+                <div class="tf-action-label">Action at Target</div>
+                <div class="tf-action-val">Close 80% · Move SL to Entry</div>
+              </div>
+              <div class="tf-bar-wrap">
+                <div class="tf-bar-track"><div class="tf-bar-fill" style="width:20%; background:#27C97E;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 30 min -->
+          <div class="tf-row" style="--tf-color:#A78BFA; --tf-bg:rgba(167,139,250,.09);">
+            <div class="tf-badge" style="background:rgba(167,139,250,.09);">
+              <div class="tf-badge-label" style="color:#A78BFA;">30 min</div>
+              <div class="tf-badge-sub">Swing</div>
+            </div>
+            <div class="tf-body">
+              <div class="tf-target">
+                <div class="tf-target-label">First TP Target</div>
+                <div class="tf-target-val" style="color:#A78BFA;">60 pips</div>
+              </div>
+              <div class="tf-action">
+                <div class="tf-action-label">Action at Target</div>
+                <div class="tf-action-val">Close 80% · Move SL to Entry</div>
+              </div>
+              <div class="tf-bar-wrap">
+                <div class="tf-bar-track"><div class="tf-bar-fill" style="width:30%; background:#A78BFA;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1 hr -->
+          <div class="tf-row" style="--tf-color:#F87171; --tf-bg:rgba(248,113,113,.09);">
+            <div class="tf-badge" style="background:rgba(248,113,113,.09);">
+              <div class="tf-badge-label" style="color:#F87171;">1 hr</div>
+              <div class="tf-badge-sub">Position</div>
+            </div>
+            <div class="tf-body">
+              <div class="tf-target">
+                <div class="tf-target-label">First TP Target</div>
+                <div class="tf-target-val" style="color:#F87171;">100 pips</div>
+              </div>
+              <div class="tf-action">
+                <div class="tf-action-label">Action at Target</div>
+                <div class="tf-action-val">Close 80% · Move SL to Entry</div>
+              </div>
+              <div class="tf-bar-wrap">
+                <div class="tf-bar-track"><div class="tf-bar-fill" style="width:50%; background:#F87171;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 hr -->
+          <div class="tf-row" style="--tf-color:#34D399; --tf-bg:rgba(52,211,153,.09);">
+            <div class="tf-badge" style="background:rgba(52,211,153,.09);">
+              <div class="tf-badge-label" style="color:#34D399;">4 hr</div>
+              <div class="tf-badge-sub">Swing+</div>
+            </div>
+            <div class="tf-body">
+              <div class="tf-target">
+                <div class="tf-target-label">First TP Target</div>
+                <div class="tf-target-val" style="color:#34D399;">200 pips</div>
+              </div>
+              <div class="tf-action">
+                <div class="tf-action-label">Action at Target</div>
+                <div class="tf-action-val">Close 80% · Move SL to Entry</div>
+              </div>
+              <div class="tf-bar-wrap">
+                <div class="tf-bar-track"><div class="tf-bar-fill" style="width:100%; background:#34D399;"></div></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.tf-grid -->
+
+        <!-- 5 Worked Examples -->
+        <div class="section-label" style="margin-top:22px; margin-bottom:10px;">5 Worked Examples — Across Timeframes</div>
+
+        <!-- Example 1 -->
+        <div class="formula-block">
+          <div class="fb-header">
+            <div class="fb-icon" style="background:rgba(245,200,66,.12); border-color:rgba(245,200,66,.3);">1️⃣</div>
+            <div><div class="fb-title">1-Minute Scalp — $1,000 Account</div><div class="fb-subtitle">4% risk · 15 pip first target · partial close strategy</div></div>
+          </div>
+          <div class="formula-eq">Account:    $1,000  |  Risk: 4%  →  $40
+SL:         15 pips = 150 points
+Lot Size:   $40 ÷ (15 × 10) = $40 ÷ 150 = 0.27 lots
+
+First TP at 15 pips:
+  Close 80% (0.21 lots) → Lock ~$32 profit
+  Remaining 20% (0.06 lots) → SL moved to Entry (risk-free)
+  Runner targets → Previous High (LONG) / Previous Low (SHORT)</div>
+          <div class="note-box green-note"><strong>Result:</strong> Even if the runner fails, you've already banked $32 profit. The last 20% is a free lottery ticket riding the trend.</div>
+        </div>
+
+        <!-- Example 2 -->
+        <div class="formula-block">
+          <div class="fb-header">
+            <div class="fb-icon" style="background:rgba(74,158,255,.12); border-color:rgba(74,158,255,.3);">2️⃣</div>
+            <div><div class="fb-title">5-Minute Short-Term — $570 Account</div><div class="fb-subtitle">3% risk · 25–30 pip target</div></div>
+          </div>
+          <div class="formula-eq">Account:    $570  |  Risk: 3%  →  $17.10
+SL:         25 pips = 250 points
+Lot Size:   $17.10 ÷ 250 = 0.068 lots  ≈  0.07 lots
+
+First TP at 25 pips:
+  Close 80% (0.056 lots) → Lock ~$14 profit
+  Remaining 20% (0.014 lots) → Move SL to Entry
+  Reward 30 pips: remaining 20% earns extra ~$8.40</div>
+          <div class="note-box blue-note"><strong>Key insight:</strong> Small account, responsible risk. Never overtrade. $17 max loss, but the partial close strategy ensures you almost always profit.</div>
+        </div>
+
+        <!-- Example 3 -->
+        <div class="formula-block">
+          <div class="fb-header">
+            <div class="fb-icon" style="background:rgba(39,201,126,.12); border-color:rgba(39,201,126,.3);">3️⃣</div>
+            <div><div class="fb-title">15-Minute Intraday — $3,500 Account</div><div class="fb-subtitle">1.5% risk · 35–40 pip target</div></div>
+          </div>
+          <div class="formula-eq">Account:    $3,500  |  Risk: 1.5%  →  $52.50
+SL:         40 pips = 400 points
+Lot Size:   $52.50 ÷ 400 = 0.131 lots  ≈  0.13 lots
+
+First TP at 35 pips:
+  Close 80% (0.104 lots) → Lock ~$36.40 profit
+  Remaining 20% (0.026 lots) → SL to Entry
+  Runner at 40 pips earns extra ~$10.40</div>
+          <div class="note-box green-note"><strong>Pro tip:</strong> 1.5% risk on a $3,500 account is very professional. This setup gives you 1:2.5 RRR with almost no stress after partial close.</div>
+        </div>
+
+        <!-- Example 4 -->
+        <div class="formula-block">
+          <div class="fb-header">
+            <div class="fb-icon" style="background:rgba(167,139,250,.12); border-color:rgba(167,139,250,.3);">4️⃣</div>
+            <div><div class="fb-title">1-Hour Position Trade — $5,000 Account</div><div class="fb-subtitle">2% risk · 100 pip target</div></div>
+          </div>
+          <div class="formula-eq">Account:    $5,000  |  Risk: 2%  →  $100
+SL:         60 pips = 600 points
+Lot Size:   $100 ÷ 600 = 0.167 lots  ≈  0.17 lots
+
+First TP at 100 pips:
+  Close 80% (0.136 lots) → Lock ~$136 profit
+  Remaining 20% (0.034 lots) → SL to Entry
+  Runner toward previous High/Low: could add $50–$200+</div>
+          <div class="note-box"><strong>Why 1H works:</strong> Bigger moves, more time to manage. The 100-pip first target = 1:1.67 RRR at full close, but partial close + runner can easily reach 1:3 or better.</div>
+        </div>
+
+        <!-- Example 5 -->
+        <div class="formula-block">
+          <div class="fb-header">
+            <div class="fb-icon" style="background:rgba(52,211,153,.12); border-color:rgba(52,211,153,.3);">5️⃣</div>
+            <div><div class="fb-title">4-Hour Swing Trade — $10,000 Account</div><div class="fb-subtitle">1% risk · 200 pip target</div></div>
+          </div>
+          <div class="formula-eq">Account:    $10,000  |  Risk: 1%  →  $100
+SL:         80 pips = 800 points
+Lot Size:   $100 ÷ 800 = 0.125 lots  ≈  0.12 lots
+
+First TP at 200 pips:
+  Close 80% (0.096 lots) → Lock ~$192 profit
+  Remaining 20% (0.024 lots) → SL to Entry
+  Swing runner: targets 300–500 pips to prev. structure</div>
+          <div class="note-box green-note"><strong>The power of 4H:</strong> With only 1% risk you stand to make 1.92% on the partial alone. The runner on a 4H trend can multiply returns. This is how institutions build wealth.</div>
+        </div>
+
+        <div class="warning-card">
+          <div class="warning-card-title">
+            <span>🚨</span> Critical Risk Warnings — Always Remember
+          </div>
+          <div class="warning-card-body">
+            <strong>1. Trade going against you?</strong> Close immediately. Every pip of hesitation costs you more.<br/>
+            <strong>2. Forgot to set your SL?</strong> Close the trade NOW. An account without a SL can go to <strong>zero or negative balance</strong> (margin call / liquidation).<br/>
+            <strong>3. These are profit-scenario targets only.</strong> If the move fails before your first TP, honour your SL without exception.<br/>
+            <strong>4. Never move SL further away</strong> from your entry. Only move it to break-even once in profit.<br/>
+            <strong>5. No trade is worth your account.</strong> Capital preservation always comes first.
+          </div>
+        </div>
+
+      </div><!-- /#p-timeframe -->
 
     </div>
   </div>
 
-</div>
+</div><!-- /.app -->
 
 <script>
+  /* ─── DIRECTION TOGGLE ─── */
   let dir = 'long';
-
   function setDir(d) {
     dir = d;
-    document.getElementById('btnLong' ).className = 'dir-btn' + (d==='long'  ? ' active-long'  : '');
+    document.getElementById('btnLong').className  = 'dir-btn' + (d==='long'  ? ' active-long'  : '');
     document.getElementById('btnShort').className = 'dir-btn' + (d==='short' ? ' active-short' : '');
     calc();
   }
 
+  /* ─── MAIN CALC ─── */
   function calc() {
     const balance = parseFloat(document.getElementById('balance').value) || 0;
     const lot     = parseFloat(document.getElementById('lotSize').value) || 0;
@@ -603,13 +1246,13 @@ Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
     gFill.style.background = riskPct <= 1 ? 'var(--green)' : riskPct <= 2 ? 'var(--amber)' : 'var(--red)';
     set('gaugeRiskLabel', riskPct.toFixed(2) + '%');
 
-    const total   = riskPts + rewardPts;
-    const rShare  = total > 0 ? riskPts   / total * 100 : 50;
-    const rwShare = total > 0 ? rewardPts / total * 100 : 50;
-    document.getElementById('rrrRiskBar').style.width   = rShare  + '%';
-    document.getElementById('rrrRewardBar').style.width = rwShare + '%';
-    document.getElementById('rrrRiskBar').textContent   = rShare  > 12 ? 'RISK'   : '';
-    document.getElementById('rrrRewardBar').textContent = rwShare > 12 ? 'REWARD' : '';
+    const total  = riskPts + rewardPts;
+    const rShr   = total > 0 ? riskPts   / total * 100 : 50;
+    const rwShr  = total > 0 ? rewardPts / total * 100 : 50;
+    document.getElementById('rrrRiskBar').style.width   = rShr  + '%';
+    document.getElementById('rrrRewardBar').style.width = rwShr + '%';
+    document.getElementById('rrrRiskBar').textContent   = rShr  > 12 ? 'RISK'   : '';
+    document.getElementById('rrrRewardBar').textContent = rwShr > 12 ? 'REWARD' : '';
     set('rrrLabel', '1 : ' + rrr.toFixed(2));
 
     verdictRRR(rrr);
@@ -617,7 +1260,7 @@ Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
   }
 
   function verdictRRR(rrr) {
-    const el = document.getElementById('verdictRRR');
+    const el    = document.getElementById('verdictRRR');
     const icon  = document.getElementById('vRRRIcon');
     const title = document.getElementById('vRRRTitle');
     const desc  = document.getElementById('vRRRDesc');
@@ -630,7 +1273,7 @@ Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
     } else if (rrr < 2) {
       el.classList.add('warning'); icon.textContent='⚠️';
       title.textContent='Average RRR — Acceptable';
-      desc.textContent=`RRR is 1:${rrr.toFixed(2)}. Consider adjusting TP to reach at least 1:2.`;
+      desc.textContent=`RRR is 1:${rrr.toFixed(2)}. Adjust TP to reach at least 1:2.`;
     } else {
       el.classList.add('good'); icon.textContent='✅';
       title.textContent='Excellent RRR — Take the trade';
@@ -639,7 +1282,7 @@ Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
   }
 
   function verdictRisk(pct) {
-    const el = document.getElementById('verdictRisk');
+    const el    = document.getElementById('verdictRisk');
     const icon  = document.getElementById('vRiskIcon');
     const title = document.getElementById('vRiskTitle');
     const desc  = document.getElementById('vRiskDesc');
@@ -652,7 +1295,7 @@ Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
     } else if (pct > 1) {
       el.classList.add('warning'); icon.textContent='⚠️';
       title.textContent='Moderate Risk — Stay cautious';
-      desc.textContent=`${pct.toFixed(2)}% risk is manageable. Aim below 1% for professional discipline.`;
+      desc.textContent=`${pct.toFixed(2)}% is manageable. Aim below 1% for professional discipline.`;
     } else {
       el.classList.add('good'); icon.textContent='🛡️';
       title.textContent='Safe Risk — Well managed';
@@ -660,8 +1303,72 @@ Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
     }
   }
 
-  function set(id, val) { const el = document.getElementById(id); if(el) el.textContent = val; }
+  /* ─── LOT SIZE CALCULATOR ─── */
+  function calcLot() {
+    const balance  = parseFloat(document.getElementById('ls-balance').value)  || 0;
+    const riskPct  = parseFloat(document.getElementById('ls-risk-pct').value) || 0;
+    const slPips   = parseFloat(document.getElementById('ls-sl-pips').value)  || 0;
 
+    if (balance <= 0 || riskPct <= 0 || slPips <= 0) return;
+
+    // Core formula
+    // 1 pip in XAUUSD = $0.10 per 0.01 lot (micro). Per standard lot = $10 per pip.
+    // Points = pips × 0.1 (since 1 pip = 0.01 and 1 point = 0.1 for XAUUSD pip value)
+    // Lot Size = Risk$ / (SL_pips × 10)  because $1/pip per standard = $10 per pip,
+    // but for the pip-based formula: $value per pip per lot = $10, so for 1 pip move on 0.01 lot = $0.10
+    // Standard formula: Lot = Risk$ / (pips × $10 per pip per standard lot)
+    // but since pip = 0.1 point and point value = lot × 100 → pip value = lot × 10
+    // → Lot = Risk$ / (pips × 10)
+
+    const riskD    = balance * (riskPct / 100);
+    const exactLot = riskD / (slPips * 10);
+    const roundedLot = Math.floor(exactLot * 100) / 100; // floor to nearest 0.01
+
+    // Lot type
+    let lotType = 'Micro Lot (0.01)';
+    if (roundedLot >= 1.0)       lotType = 'Standard Lot (1.00+)';
+    else if (roundedLot >= 0.10) lotType = 'Mini Lot (0.10+)';
+    else                          lotType = 'Micro Lot (0.01+)';
+
+    // Badge
+    const badge = document.getElementById('lotResultBadge');
+    badge.textContent = roundedLot.toFixed(2) + ' LOTS';
+
+    // Metrics
+    set('ls-out-riskd',   '$' + riskD.toFixed(2));
+    set('ls-out-riskpct', riskPct.toFixed(2) + '% of balance');
+    set('ls-out-exact',   exactLot.toFixed(4));
+    set('ls-out-rounded', roundedLot.toFixed(2));
+    set('ls-out-type',    lotType);
+
+    // Steps
+    setHTML('ls-step1', `Max Risk = <strong>$${balance.toFixed(2)}</strong> × <strong>${riskPct}%</strong> = <strong>$${riskD.toFixed(2)}</strong>`);
+    setHTML('ls-step2', `SL in Points = <strong>${slPips} pips</strong> × 10 = <strong>${(slPips * 10).toFixed(0)} points</strong>`);
+    setHTML('ls-step3', `Exact Lot = <strong>$${riskD.toFixed(2)}</strong> ÷ <strong>${(slPips * 10).toFixed(0)}</strong> = <strong>${exactLot.toFixed(4)} lots</strong>`);
+    setHTML('ls-step4', `Rounded down to safe lot = <strong>${roundedLot.toFixed(2)} lots</strong> (always round DOWN to protect capital)`);
+
+    // Micro grid
+    set('ls-std',   (roundedLot).toFixed(2) + ' std');
+    set('ls-mini',  (roundedLot * 10).toFixed(1) + ' mini');
+    set('ls-micro', Math.round(roundedLot * 100) + ' micro');
+
+    // Actual loss check with rounded lot
+    const actualLoss = roundedLot * slPips * 10;
+    const warning    = document.getElementById('lotWarning');
+    const warnText   = document.getElementById('lotWarningText');
+
+    if (riskPct > 3) {
+      warning.style.display = 'flex';
+      warnText.textContent = `You are risking ${riskPct.toFixed(2)}% per trade. This is above the recommended 1–2% maximum. Consider reducing risk percentage for safer capital management.`;
+    } else if (actualLoss > riskD) {
+      warning.style.display = 'flex';
+      warnText.textContent = `Actual loss with rounded lot ($${actualLoss.toFixed(2)}) slightly exceeds target risk ($${riskD.toFixed(2)}). Always round DOWN your lot size, never up.`;
+    } else {
+      warning.style.display = 'none';
+    }
+  }
+
+  /* ─── TABS ─── */
   document.getElementById('tabs').addEventListener('click', e => {
     if (!e.target.classList.contains('ftab')) return;
     document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
@@ -670,13 +1377,20 @@ Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
     document.getElementById(e.target.dataset.panel).classList.add('active');
   });
 
+  /* ─── THEME ─── */
   document.getElementById('themeBtn').addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
     document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
   });
 
+  /* ─── HELPERS ─── */
+  function set(id, val)     { const el = document.getElementById(id); if (el) el.textContent = val; }
+  function setHTML(id, val) { const el = document.getElementById(id); if (el) el.innerHTML   = val; }
+
+  /* ─── INIT ─── */
   calc();
+  calcLot();
 </script>
 </body>
 </html>
