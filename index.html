@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>XAUUSD Risk Dashboard</title>
+  <title>Forex Risk Calculator — Multi-Pair Trade Desk</title>
 
   <!-- ── FAVICON ── -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230C0D11'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23F5C842' opacity='.18'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23F5C842' opacity='.35'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%23F5C842'/%3E%3Ctext x='32' y='37' font-family='Arial' font-size='13' font-weight='900' fill='%230C0D11' text-anchor='middle'%3EXU%3C/text%3E%3C/svg%3E"/>
-  <meta name="description" content="XAUUSD Risk & RRR Calculator — Professional Trade Intelligence Dashboard"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230C0D11'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23F5C842' opacity='.18'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23F5C842' opacity='.35'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%23F5C842'/%3E%3Ctext x='32' y='37' font-family='Arial' font-size='13' font-weight='900' fill='%230C0D11' text-anchor='middle'%3EFX%3C/text%3E%3C/svg%3E"/>
+  <meta name="description" content="Forex Risk Calculator — Multi-Pair &amp; XAUUSD Trade Intelligence Dashboard"/>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 
@@ -79,7 +79,7 @@
     .app { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 28px 20px 72px; }
 
     /* ── HEADER ── */
-    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
     .brand { display: flex; align-items: center; gap: 13px; }
     .brand-icon {
       width: 46px; height: 46px; border-radius: 13px;
@@ -117,6 +117,38 @@
       border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-card);
       transition: background .3s, border-color .3s; margin-bottom: 16px;
     }
+
+    /* ── INSTRUMENT SELECTOR ── */
+    .instrument-row { display: flex; gap: 13px; margin-bottom: 18px; flex-wrap: wrap; }
+    .instrument-select-wrap { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 6px; }
+    .instrument-select-wrap label {
+      font-size: .67rem; font-weight: 600; letter-spacing: .05em;
+      text-transform: uppercase; color: var(--text-muted);
+      display: flex; align-items: center; gap: 5px;
+    }
+    select#instrument {
+      width: 100%; background: var(--surface-2); border: 1.5px solid var(--gold-ring);
+      border-radius: var(--radius-sm); color: var(--text);
+      font-family: 'Poppins', sans-serif; font-size: .88rem; font-weight: 600;
+      padding: 11px 13px; outline: none; cursor: pointer;
+      transition: border-color .2s, box-shadow .2s, background .25s;
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--gold) 50%), linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+      background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px);
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+    select#instrument:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-ring); background-color: var(--surface-3); }
+    .instrument-badge-wrap { display: flex; flex-direction: column; gap: 6px; justify-content: flex-end; }
+    .instrument-badge-wrap label { font-size: .67rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); }
+    .instrument-meta {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface-2); border: 1.5px solid var(--border-md);
+      border-radius: var(--radius-sm); padding: 10.5px 14px;
+      font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .instrument-meta strong { color: var(--gold); font-weight: 600; }
 
     /* ── DIRECTION ── */
     .dir-toggle { display: flex; gap: 8px; margin-bottom: 18px; }
@@ -392,17 +424,19 @@
     }
     .fb-desc { font-size: .73rem; color: var(--text-muted); line-height: 1.65; }
 
-    .var-table, .thresh-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .var-table th, .thresh-table th {
+    .var-table, .thresh-table, .spec-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .var-table th, .thresh-table th, .spec-table th {
       font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
       color: var(--text-dim); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border-md);
     }
-    .var-table td, .thresh-table td {
+    .var-table td, .thresh-table td, .spec-table td {
       font-size: .72rem; padding: 7px 8px; border-bottom: 1px solid var(--border);
       vertical-align: top; color: var(--text-muted);
     }
-    .var-table tr:last-child td, .thresh-table tr:last-child td { border-bottom: none; }
+    .var-table tr:last-child td, .thresh-table tr:last-child td, .spec-table tr:last-child td { border-bottom: none; }
     .var-name { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--gold) !important; white-space: nowrap; }
+    .spec-table { display: block; overflow-x: auto; white-space: nowrap; }
+    .spec-table table { width: 100%; }
 
     .badge { display: inline-block; padding: 2px 9px; border-radius: 100px; font-size: .62rem; font-weight: 700; letter-spacing: .04em; }
     .badge-good    { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-bdr); }
@@ -511,6 +545,8 @@
 
     @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
     .lot-result-panel { animation: slideIn .35s ease both; }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -521,8 +557,8 @@
     <div class="brand">
       <div class="brand-icon">⚡</div>
       <div class="brand-text">
-        <h1>XAUUSD Risk Desk</h1>
-        <p>Trade Intelligence Dashboard</p>
+        <h1>Forex Risk Calculator</h1>
+        <p>Multi-Pair &amp; XAUUSD Trade Desk</p>
       </div>
     </div>
     <div class="header-right">
@@ -534,6 +570,18 @@
   <!-- ══ TRADE PARAMETERS ══ -->
   <div class="section-label">Trade Parameters</div>
   <div class="card">
+
+    <div class="instrument-row">
+      <div class="instrument-select-wrap">
+        <label>💱 Instrument</label>
+        <select id="instrument" onchange="onInstrumentChange()"></select>
+      </div>
+      <div class="instrument-badge-wrap">
+        <label>Contract Spec</label>
+        <div class="instrument-meta" id="instrumentMeta">—</div>
+      </div>
+    </div>
+
     <div class="dir-toggle">
       <button class="dir-btn active-long"  id="btnLong"  onclick="setDir('long')">▲ LONG / BUY</button>
       <button class="dir-btn"              id="btnShort" onclick="setDir('short')">▼ SHORT / SELL</button>
@@ -549,15 +597,19 @@
       </div>
       <div class="input-group">
         <label>🎯 Entry Price</label>
-        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="entry" value="2000" step="0.01" oninput="calc()"/></div>
+        <div class="input-wrap"><span class="prefix" id="prefEntry">$</span><input type="number" id="entry" value="2000" step="0.01" oninput="calc()"/></div>
       </div>
       <div class="input-group">
         <label>🛑 Stop Loss (SL)</label>
-        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="sl" value="1995" step="0.01" oninput="calc()"/></div>
+        <div class="input-wrap"><span class="prefix" id="prefSl">$</span><input type="number" id="sl" value="1995" step="0.01" oninput="calc()"/></div>
       </div>
       <div class="input-group" style="grid-column:1/-1;">
         <label>✅ Take Profit (TP)</label>
-        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="tp" value="2010" step="0.01" oninput="calc()"/></div>
+        <div class="input-wrap"><span class="prefix" id="prefTp">$</span><input type="number" id="tp" value="2010" step="0.01" oninput="calc()"/></div>
+      </div>
+      <div class="input-group hidden" id="convRow" style="grid-column:1/-1;">
+        <label id="convLabel">💱 Conversion Rate</label>
+        <div class="input-wrap"><span class="prefix">×</span><input type="number" id="convRate" value="1" step="0.0001" oninput="calc()"/></div>
       </div>
     </div>
     <button class="calc-btn" onclick="calc()">⚡ Calculate Risk &amp; Reward</button>
@@ -569,12 +621,12 @@
     <div class="metric-card" style="--accent:var(--red)">
       <div class="metric-label">Risk $</div>
       <div class="metric-value" id="outRiskD">—</div>
-      <div class="metric-sub"  id="outRiskPts">— pts</div>
+      <div class="metric-sub"  id="outRiskPts">— dist</div>
     </div>
     <div class="metric-card" style="--accent:var(--green)">
       <div class="metric-label">Reward $</div>
       <div class="metric-value" id="outRewardD">—</div>
-      <div class="metric-sub"  id="outRewardPts">— pts</div>
+      <div class="metric-sub"  id="outRewardPts">— dist</div>
     </div>
     <div class="metric-card" style="--accent:var(--amber)">
       <div class="metric-label">Risk %</div>
@@ -648,10 +700,10 @@
   <div class="section-label">Extended Stats</div>
   <div class="card">
     <div class="ext-grid">
-      <div><div class="ext-label">Risk Points</div><div class="ext-value" id="extRiskPips">—</div></div>
-      <div><div class="ext-label">Reward Points</div><div class="ext-value" id="extRewardPips">—</div></div>
-      <div><div class="ext-label">$ / Point</div><div class="ext-value" id="extPipVal">—</div></div>
-      <div><div class="ext-label">Breakeven RRR</div><div class="ext-value">1 : 1.00</div></div>
+      <div><div class="ext-label">Risk Distance</div><div class="ext-value" id="extRiskPips">—</div></div>
+      <div><div class="ext-label">Reward Distance</div><div class="ext-value" id="extRewardPips">—</div></div>
+      <div><div class="ext-label">Risk in Pips</div><div class="ext-value" id="extRiskInPips">—</div></div>
+      <div><div class="ext-label">$ / Pip (this lot)</div><div class="ext-value" id="extPipVal">—</div></div>
     </div>
   </div>
 
@@ -666,7 +718,7 @@
       <div class="lot-tool-icon">🎯</div>
       <div>
         <div class="lot-tool-title">Smart Lot Size from Stop Loss</div>
-        <div class="lot-tool-sub">Enter your account size, risk %, and SL in pips → get the exact lot size</div>
+        <div class="lot-tool-sub">Uses the instrument selected above. Enter account size, risk %, and SL in pips → get the exact lot size.</div>
       </div>
     </div>
 
@@ -698,7 +750,7 @@
 
     <div class="lot-result-panel" id="lotResultPanel">
       <div class="lot-result-header">
-        <span>Position Sizing Result</span>
+        <span>Position Sizing Result — <span id="lotResultInstrument">XAUUSD</span></span>
         <span class="lot-result-badge" id="lotResultBadge">CALCULATING…</span>
       </div>
       <div class="lot-result-body">
@@ -776,7 +828,7 @@
     <div style="padding:0 22px;">
       <div class="formula-tabs" id="tabs">
         <button class="ftab active"  data-panel="p-core">Core Formulas</button>
-        <button class="ftab"         data-panel="p-pip">Pip &amp; Lot Sizes</button>
+        <button class="ftab"         data-panel="p-instruments">Instrument Specs</button>
         <button class="ftab"         data-panel="p-thresholds">Thresholds</button>
         <button class="ftab"         data-panel="p-example">Worked Example</button>
         <button class="ftab"         data-panel="p-timeframe">⏱ Timeframe Targets</button>
@@ -787,29 +839,37 @@
       <!-- ── TAB 1: CORE FORMULAS ── -->
       <div class="fpanel active" id="p-core">
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">📏</div><div><div class="fb-title">Risk Points &amp; Reward Points</div><div class="fb-subtitle">Distance from entry to SL / TP in price units</div></div></div>
-          <div class="formula-eq">Risk Points   = |Entry − Stop Loss|
-Reward Points = |Take Profit − Entry|</div>
+          <div class="fb-header"><div class="fb-icon">📏</div><div><div class="fb-title">Risk Distance &amp; Reward Distance</div><div class="fb-subtitle">Raw price distance from entry to SL / TP</div></div></div>
+          <div class="formula-eq">Risk Distance   = |Entry − Stop Loss|
+Reward Distance = |Take Profit − Entry|</div>
           <div class="fb-desc">Absolute value so the formula works for both LONG and SHORT. For LONG: Entry &gt; SL and TP &gt; Entry. For SHORT: Entry &lt; SL and TP &lt; Entry.</div>
           <table class="var-table">
             <tr><th>Variable</th><th>Meaning</th></tr>
-            <tr><td class="var-name">Entry</td><td>Trade open price (e.g. 2000.00)</td></tr>
+            <tr><td class="var-name">Entry</td><td>Trade open price</td></tr>
             <tr><td class="var-name">SL</td><td>Stop Loss — exit point if trade moves against you</td></tr>
             <tr><td class="var-name">TP</td><td>Take Profit — target exit to lock in profit</td></tr>
           </table>
         </div>
 
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">💵</div><div><div class="fb-title">Risk &amp; Reward in Dollars</div><div class="fb-subtitle">Monetary value of your risk and potential gain</div></div></div>
-          <div class="formula-eq">Risk ($)   = Risk Points   × Lot Size × 100
-Reward ($) = Reward Points × Lot Size × 100</div>
-          <div class="fb-desc">For XAUUSD, 1 standard lot = 100 oz of gold. A $1 price move on 1 standard lot = $100 P&amp;L. Multiplier is <strong style="color:var(--gold)">Lot Size × 100</strong>.</div>
+          <div class="fb-header"><div class="fb-icon">💵</div><div><div class="fb-title">Risk &amp; Reward in Dollars — Universal Formula</div><div class="fb-subtitle">Works for XAUUSD and all 10 forex pairs</div></div></div>
+          <div class="formula-eq">Value in Quote Currency = Distance × Contract Units × Lot Size
+
+Risk ($)   = (Risk Distance   × Contract Units × Lot) ÷ Conversion Factor
+Reward ($) = (Reward Distance × Contract Units × Lot) ÷ Conversion Factor</div>
+          <div class="fb-desc">
+            <strong style="color:var(--gold)">Contract Units</strong> = 100 oz for XAUUSD, or 100,000 units for standard forex lots.<br/>
+            <strong style="color:var(--gold)">Conversion Factor</strong> depends on the instrument's category:
+          </div>
           <table class="var-table">
-            <tr><th>Variable</th><th>Meaning</th></tr>
-            <tr><td class="var-name">Lot Size</td><td>0.01 = micro, 0.10 = mini, 1.00 = standard</td></tr>
-            <tr><td class="var-name">× 100</td><td>XAUUSD = 100 oz/lot → $100 per full point per standard lot</td></tr>
+            <tr><th>Category</th><th>Example Pairs</th><th>Conversion Factor</th></tr>
+            <tr><td class="var-name">Metal</td><td>XAUUSD</td><td>1 (already USD)</td></tr>
+            <tr><td class="var-name">USD-Quote</td><td>EUR/USD, GBP/USD, AUD/USD, NZD/USD</td><td>1 (already USD)</td></tr>
+            <tr><td class="var-name">USD-Base</td><td>USD/JPY, USD/CAD, USD/CHF</td><td>Divide by Entry Price</td></tr>
+            <tr><td class="var-name">Cross (GBP quote)</td><td>EUR/GBP</td><td>Multiply by GBP/USD rate</td></tr>
+            <tr><td class="var-name">Cross (JPY quote)</td><td>GBP/JPY, EUR/JPY</td><td>Divide by USD/JPY rate</td></tr>
           </table>
-          <div class="note-box"><strong>Example:</strong> 5 pts × 0.01 lot × 100 = <strong>$5.00 at risk</strong>. Same move on 0.10 lot = $50 at risk.</div>
+          <div class="note-box"><strong>Why this matters:</strong> A pip on GBP/JPY isn't worth the same in USD as a pip on EUR/USD. The calculator applies the correct factor automatically based on the instrument you select — you only need to supply a conversion rate for cross pairs (a sensible default is pre-filled).</div>
         </div>
 
         <div class="formula-block">
@@ -826,36 +886,40 @@ Reward ($) = Reward Points × Lot Size × 100</div>
         </div>
       </div>
 
-      <!-- ── TAB 2: PIP & LOT ── -->
-      <div class="fpanel" id="p-pip">
+      <!-- ── TAB 2: INSTRUMENT SPECS ── -->
+      <div class="fpanel" id="p-instruments">
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">📦</div><div><div class="fb-title">Lot Size Contract Sizes</div><div class="fb-subtitle">Standard contract sizes in XAUUSD</div></div></div>
-          <div class="formula-eq">1 Standard Lot = 100 troy ounces of gold
-1 Mini Lot     =  10 troy ounces  (0.10 lots)
-1 Micro Lot    =   1 troy ounce   (0.01 lots)</div>
-          <table class="var-table">
-            <tr><th>Lot</th><th>Ounces</th><th>$1 Move</th><th>$10 Move</th><th>$100 Move</th></tr>
-            <tr><td class="var-name">1.00</td><td>100 oz</td><td>$100</td><td>$1,000</td><td>$10,000</td></tr>
-            <tr><td class="var-name">0.10</td><td>10 oz</td><td>$10</td><td>$100</td><td>$1,000</td></tr>
-            <tr><td class="var-name">0.01</td><td>1 oz</td><td>$1</td><td>$10</td><td>$100</td></tr>
-          </table>
+          <div class="fb-header"><div class="fb-icon">📦</div><div><div class="fb-title">Contract Sizes &amp; Pip Definitions</div><div class="fb-subtitle">Every instrument this app supports</div></div></div>
+          <div class="spec-table">
+            <table>
+              <tr><th>Instrument</th><th>Category</th><th>Contract / Lot</th><th>1 Pip</th><th>Pip Value / Standard Lot*</th></tr>
+              <tr><td class="var-name">XAUUSD</td><td>Metal</td><td>100 oz</td><td>$0.10</td><td>≈ $10.00</td></tr>
+              <tr><td class="var-name">EUR/USD</td><td>USD-Quote</td><td>100,000 EUR</td><td>0.0001</td><td>≈ $10.00</td></tr>
+              <tr><td class="var-name">GBP/USD</td><td>USD-Quote</td><td>100,000 GBP</td><td>0.0001</td><td>≈ $10.00</td></tr>
+              <tr><td class="var-name">AUD/USD</td><td>USD-Quote</td><td>100,000 AUD</td><td>0.0001</td><td>≈ $10.00</td></tr>
+              <tr><td class="var-name">NZD/USD</td><td>USD-Quote</td><td>100,000 NZD</td><td>0.0001</td><td>≈ $10.00</td></tr>
+              <tr><td class="var-name">USD/JPY</td><td>USD-Base</td><td>100,000 USD</td><td>0.01</td><td>≈ $1,000 ÷ price</td></tr>
+              <tr><td class="var-name">USD/CAD</td><td>USD-Base</td><td>100,000 USD</td><td>0.0001</td><td>≈ $10 ÷ price</td></tr>
+              <tr><td class="var-name">USD/CHF</td><td>USD-Base</td><td>100,000 USD</td><td>0.0001</td><td>≈ $10 ÷ price</td></tr>
+              <tr><td class="var-name">EUR/GBP</td><td>Cross (GBP)</td><td>100,000 EUR</td><td>0.0001</td><td>≈ $10 × GBPUSD</td></tr>
+              <tr><td class="var-name">GBP/JPY</td><td>Cross (JPY)</td><td>100,000 GBP</td><td>0.01</td><td>≈ $1,000 ÷ USDJPY</td></tr>
+              <tr><td class="var-name">EUR/JPY</td><td>Cross (JPY)</td><td>100,000 EUR</td><td>0.01</td><td>≈ $1,000 ÷ USDJPY</td></tr>
+            </table>
+          </div>
+          <div class="fb-desc" style="margin-top:10px;">*Approximate, at typical current market rates. Values move with the live exchange rate for any pair that isn't USD-quoted.</div>
         </div>
 
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">🔢</div><div><div class="fb-title">Reverse-Engineering Lot Size</div><div class="fb-subtitle">Find the correct lot size for a fixed risk amount</div></div></div>
           <div class="formula-eq">Max Risk ($)  = Account Balance × (Risk % ÷ 100)
 
-Lot Size = Max Risk ($) ÷ (Risk Points × 100)</div>
-          <div class="fb-desc">Decide your risk % first, then solve for lot size — never the other way around.</div>
-          <div class="note-box"><strong>Example:</strong> $5,000 · 1% risk · 15-pt SL → Max Risk = $50 → Lot = 50 ÷ 1500 = <strong>0.033 lots</strong></div>
+Lot Size = Max Risk ($) ÷ (SL in Pips × Pip Value per Standard Lot)</div>
+          <div class="fb-desc">Decide your risk % first, then solve for lot size — never the other way around. The "Lot Size Calculator" tool above does this automatically for whichever instrument is selected.</div>
         </div>
 
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">💱</div><div><div class="fb-title">Points vs Pips in XAUUSD</div></div></div>
-          <div class="formula-eq">1 Point = $1.00 price change  (2000.00 → 2001.00)
-1 Pip   = $0.01 price change  (2000.00 → 2000.01)
-1 Point = 100 Pips</div>
-          <div class="fb-desc">This calculator uses <strong style="color:var(--gold)">points</strong> for the RRR tool. The Lot Sizing Tool above uses <strong style="color:var(--blue)">pips</strong>. 45 pips = 0.45 points. To convert: divide pips by 100.</div>
+          <div class="fb-header"><div class="fb-icon">💱</div><div><div class="fb-title">Why Conversion Rates Matter</div></div></div>
+          <div class="fb-desc">USD-quote pairs (EUR/USD, GBP/USD, AUD/USD, NZD/USD) and XAUUSD already price in USD, so no conversion is needed. USD-base pairs (USD/JPY, USD/CAD, USD/CHF) automatically use your entered Entry Price to convert. True cross pairs (EUR/GBP, GBP/JPY, EUR/JPY) need one extra number — a live conversion rate — because neither side of the pair is USD. The app pre-fills a realistic default, but for real trading always plug in the live rate from your broker.</div>
         </div>
       </div>
 
@@ -889,38 +953,70 @@ Lot Size = Max Risk ($) ÷ (Risk Points × 100)</div>
       <!-- ── TAB 4: WORKED EXAMPLE ── -->
       <div class="fpanel" id="p-example">
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">📖</div><div><div class="fb-title">Full Worked Example</div><div class="fb-subtitle">Step-by-step using the default values</div></div></div>
+          <div class="fb-header"><div class="fb-icon">📖</div><div><div class="fb-title">Worked Example 1 — XAUUSD</div><div class="fb-subtitle">Metal category, conversion factor = 1</div></div></div>
           <div class="formula-eq">Given:
   Account Balance  =  $1,000.00
   Lot Size         =  0.01
   Entry Price      =  2000.00
   Stop Loss (SL)   =  1995.00
-  Take Profit (TP) =  2010.00</div>
+  Take Profit (TP) =  2010.00
+
+Risk Distance   = |2000.00 − 1995.00| =  5.00
+Reward Distance = |2010.00 − 2000.00| = 10.00
+
+$ per unit distance = 0.01 lot × 100 oz = $1.00
+Risk ($)   =  5.00 × $1.00 =  $5.00
+Reward ($) = 10.00 × $1.00 = $10.00
+
+Risk (%) = ($5.00 ÷ $1,000.00) × 100 = 0.50%
+RRR = $10.00 ÷ $5.00 = 1 : 2.00</div>
+          <div class="fb-desc" style="color:var(--green)">✅ 0.50% risk, 1:2 RRR — a well-structured, low-risk trade.</div>
         </div>
+
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">1️⃣</div><div><div class="fb-title">Step 1 — Calculate Points</div></div></div>
-          <div class="formula-eq">Risk Points   = |2000.00 − 1995.00| =  5.00 pts
-Reward Points = |2010.00 − 2000.00| = 10.00 pts</div>
+          <div class="fb-header"><div class="fb-icon">📖</div><div><div class="fb-title">Worked Example 2 — EUR/USD</div><div class="fb-subtitle">USD-Quote category, conversion factor = 1</div></div></div>
+          <div class="formula-eq">Given:
+  Account Balance  =  $2,000.00
+  Lot Size         =  0.10 (mini lot)
+  Entry Price      =  1.16250
+  Stop Loss (SL)   =  1.16000
+  Take Profit (TP) =  1.16750
+
+Risk Distance   = |1.16250 − 1.16000| = 0.00250
+Reward Distance = |1.16750 − 1.16250| = 0.00500
+
+$ per unit distance = 0.10 lot × 100,000 = $10,000
+Risk ($)   = 0.00250 × 10,000 = $25.00
+Reward ($) = 0.00500 × 10,000 = $50.00
+
+Risk (%) = ($25.00 ÷ $2,000.00) × 100 = 1.25%
+RRR = $50.00 ÷ $25.00 = 1 : 2.00</div>
+          <div class="fb-desc" style="color:var(--amber)">⚠️ 1.25% risk is moderate — still inside acceptable range, but reduce lot size for a more conservative trade.</div>
         </div>
+
         <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">2️⃣</div><div><div class="fb-title">Step 2 — Dollar Value per Point</div></div></div>
-          <div class="formula-eq">$ per Point = 0.01 lot × 100 = $1.00 per point</div>
-        </div>
-        <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">3️⃣</div><div><div class="fb-title">Step 3 — Risk &amp; Reward in Dollars</div></div></div>
-          <div class="formula-eq">Risk ($)   =  5.00 pts × $1.00/pt =  $5.00
-Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
-        </div>
-        <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">4️⃣</div><div><div class="fb-title">Step 4 — Risk Percentage</div></div></div>
-          <div class="formula-eq">Risk (%) = ($5.00 ÷ $1,000.00) × 100 = 0.50%</div>
-          <div class="fb-desc" style="color:var(--green)">✅ 0.50% — professional safe zone</div>
-        </div>
-        <div class="formula-block">
-          <div class="fb-header"><div class="fb-icon">5️⃣</div><div><div class="fb-title">Step 5 — Risk-to-Reward Ratio</div></div></div>
-          <div class="formula-eq">RRR = $10.00 ÷ $5.00 = 2.00  →  1 : 2.00</div>
-          <div class="fb-desc" style="color:var(--green)">✅ 1:2 — meets the professional minimum</div>
-          <div class="note-box"><strong>Final verdict:</strong> Risk $5 to make $10. Only 0.50% of capital at risk. Break-even win rate = 33.3%. A <strong>well-structured, low-risk trade</strong>.</div>
+          <div class="fb-header"><div class="fb-icon">📖</div><div><div class="fb-title">Worked Example 3 — USD/JPY</div><div class="fb-subtitle">USD-Base category, conversion factor = ÷ Entry Price</div></div></div>
+          <div class="formula-eq">Given:
+  Account Balance  =  $5,000.00
+  Lot Size         =  0.20
+  Entry Price      =  154.000
+  Stop Loss (SL)   =  153.700
+  Take Profit (TP) =  154.600
+
+Risk Distance   = |154.000 − 153.700| = 0.300
+Reward Distance = |154.600 − 154.000| = 0.600
+
+Value in JPY = Distance × 100,000 × 0.20 lot
+Risk (JPY)   = 0.300 × 100,000 × 0.20 = 6,000 JPY
+Reward (JPY) = 0.600 × 100,000 × 0.20 = 12,000 JPY
+
+Convert JPY → USD by dividing by Entry Price (154.000):
+Risk ($)   = 6,000 ÷ 154.000 =  $38.96
+Reward ($) = 12,000 ÷ 154.000 = $77.92
+
+Risk (%) = ($38.96 ÷ $5,000.00) × 100 = 0.78%
+RRR = 1 : 2.00</div>
+          <div class="fb-desc" style="color:var(--green)">✅ 0.78% risk, 1:2 RRR — the app performs this JPY→USD conversion automatically.</div>
         </div>
       </div>
 
@@ -941,7 +1037,7 @@ Reward ($) = 10.00 pts × $1.00/pt = $10.00</div>
           <div class="partial-close-body">
             In VSA (Volume Spread Analysis) we work with <strong>high-probability, trend-aligned setups</strong> that carry an 80–90% win rate. Because the edge is so strong, you may take up to <strong>4% risk</strong> on these setups instead of the usual 1–2%.
             <br/><br/>
-            When price hits your first target (see table below):
+            When price hits your first target (see table below — pip counts use whichever instrument you're trading):
             <br/>
             → <strong>Close 80% of your position</strong> — locking in 3% profit and making the trade risk-free.<br/>
             → <strong>Move SL to Entry</strong> — the remaining 20% now rides for free.<br/>
@@ -959,7 +1055,7 @@ Remaining 20% →  SL moved to Entry      (risk-free runner)
 Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
         </div>
 
-        <div class="section-label" style="margin-top:4px; margin-bottom:10px;">Timeframe Target Reference Table</div>
+        <div class="section-label" style="margin-top:4px; margin-bottom:10px;">Timeframe Target Reference Table (in pips, any instrument)</div>
 
         <div class="tf-grid">
 
@@ -1112,94 +1208,6 @@ Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
 
         </div><!-- /.tf-grid -->
 
-        <!-- 5 Worked Examples -->
-        <div class="section-label" style="margin-top:22px; margin-bottom:10px;">5 Worked Examples — Across Timeframes</div>
-
-        <!-- Example 1 -->
-        <div class="formula-block">
-          <div class="fb-header">
-            <div class="fb-icon" style="background:rgba(245,200,66,.12); border-color:rgba(245,200,66,.3);">1️⃣</div>
-            <div><div class="fb-title">1-Minute Scalp — $1,000 Account</div><div class="fb-subtitle">4% risk · 15 pip first target · partial close strategy</div></div>
-          </div>
-          <div class="formula-eq">Account:    $1,000  |  Risk: 4%  →  $40
-SL:         15 pips = 150 points
-Lot Size:   $40 ÷ (15 × 10) = $40 ÷ 150 = 0.27 lots
-
-First TP at 15 pips:
-  Close 80% (0.21 lots) → Lock ~$32 profit
-  Remaining 20% (0.06 lots) → SL moved to Entry (risk-free)
-  Runner targets → Previous High (LONG) / Previous Low (SHORT)</div>
-          <div class="note-box green-note"><strong>Result:</strong> Even if the runner fails, you've already banked $32 profit. The last 20% is a free lottery ticket riding the trend.</div>
-        </div>
-
-        <!-- Example 2 -->
-        <div class="formula-block">
-          <div class="fb-header">
-            <div class="fb-icon" style="background:rgba(74,158,255,.12); border-color:rgba(74,158,255,.3);">2️⃣</div>
-            <div><div class="fb-title">5-Minute Short-Term — $570 Account</div><div class="fb-subtitle">3% risk · 25–30 pip target</div></div>
-          </div>
-          <div class="formula-eq">Account:    $570  |  Risk: 3%  →  $17.10
-SL:         25 pips = 250 points
-Lot Size:   $17.10 ÷ 250 = 0.068 lots  ≈  0.07 lots
-
-First TP at 25 pips:
-  Close 80% (0.056 lots) → Lock ~$14 profit
-  Remaining 20% (0.014 lots) → Move SL to Entry
-  Reward 30 pips: remaining 20% earns extra ~$8.40</div>
-          <div class="note-box blue-note"><strong>Key insight:</strong> Small account, responsible risk. Never overtrade. $17 max loss, but the partial close strategy ensures you almost always profit.</div>
-        </div>
-
-        <!-- Example 3 -->
-        <div class="formula-block">
-          <div class="fb-header">
-            <div class="fb-icon" style="background:rgba(39,201,126,.12); border-color:rgba(39,201,126,.3);">3️⃣</div>
-            <div><div class="fb-title">15-Minute Intraday — $3,500 Account</div><div class="fb-subtitle">1.5% risk · 35–40 pip target</div></div>
-          </div>
-          <div class="formula-eq">Account:    $3,500  |  Risk: 1.5%  →  $52.50
-SL:         40 pips = 400 points
-Lot Size:   $52.50 ÷ 400 = 0.131 lots  ≈  0.13 lots
-
-First TP at 35 pips:
-  Close 80% (0.104 lots) → Lock ~$36.40 profit
-  Remaining 20% (0.026 lots) → SL to Entry
-  Runner at 40 pips earns extra ~$10.40</div>
-          <div class="note-box green-note"><strong>Pro tip:</strong> 1.5% risk on a $3,500 account is very professional. This setup gives you 1:2.5 RRR with almost no stress after partial close.</div>
-        </div>
-
-        <!-- Example 4 -->
-        <div class="formula-block">
-          <div class="fb-header">
-            <div class="fb-icon" style="background:rgba(167,139,250,.12); border-color:rgba(167,139,250,.3);">4️⃣</div>
-            <div><div class="fb-title">1-Hour Position Trade — $5,000 Account</div><div class="fb-subtitle">2% risk · 100 pip target</div></div>
-          </div>
-          <div class="formula-eq">Account:    $5,000  |  Risk: 2%  →  $100
-SL:         60 pips = 600 points
-Lot Size:   $100 ÷ 600 = 0.167 lots  ≈  0.17 lots
-
-First TP at 100 pips:
-  Close 80% (0.136 lots) → Lock ~$136 profit
-  Remaining 20% (0.034 lots) → SL to Entry
-  Runner toward previous High/Low: could add $50–$200+</div>
-          <div class="note-box"><strong>Why 1H works:</strong> Bigger moves, more time to manage. The 100-pip first target = 1:1.67 RRR at full close, but partial close + runner can easily reach 1:3 or better.</div>
-        </div>
-
-        <!-- Example 5 -->
-        <div class="formula-block">
-          <div class="fb-header">
-            <div class="fb-icon" style="background:rgba(52,211,153,.12); border-color:rgba(52,211,153,.3);">5️⃣</div>
-            <div><div class="fb-title">4-Hour Swing Trade — $10,000 Account</div><div class="fb-subtitle">1% risk · 200 pip target</div></div>
-          </div>
-          <div class="formula-eq">Account:    $10,000  |  Risk: 1%  →  $100
-SL:         80 pips = 800 points
-Lot Size:   $100 ÷ 800 = 0.125 lots  ≈  0.12 lots
-
-First TP at 200 pips:
-  Close 80% (0.096 lots) → Lock ~$192 profit
-  Remaining 20% (0.024 lots) → SL to Entry
-  Swing runner: targets 300–500 pips to prev. structure</div>
-          <div class="note-box green-note"><strong>The power of 4H:</strong> With only 1% risk you stand to make 1.92% on the partial alone. The runner on a 4H trend can multiply returns. This is how institutions build wealth.</div>
-        </div>
-
         <div class="warning-card">
           <div class="warning-card-title">
             <span>🚨</span> Critical Risk Warnings — Always Remember
@@ -1221,6 +1229,95 @@ First TP at 200 pips:
 </div><!-- /.app -->
 
 <script>
+  /* ═══════════════════════════════════════════════
+     INSTRUMENT CONFIG
+     category: metal | usd_quote | usd_base | cross_gbp | cross_jpy
+  ═══════════════════════════════════════════════ */
+  const INSTRUMENTS = {
+    XAUUSD: { label:'XAUUSD — Gold / US Dollar',        category:'metal',     units:100,    pip:0.1,    decimals:2, defPrice:4380.00, quoteSym:'$',  needsConv:false },
+    EURUSD: { label:'EUR/USD — Euro / US Dollar',        category:'usd_quote', units:100000, pip:0.0001, decimals:5, defPrice:1.16250, quoteSym:'$',  needsConv:false },
+    GBPUSD: { label:'GBP/USD — British Pound / US Dollar',category:'usd_quote',units:100000, pip:0.0001, decimals:5, defPrice:1.35450, quoteSym:'$',  needsConv:false },
+    AUDUSD: { label:'AUD/USD — Australian Dollar / US Dollar', category:'usd_quote', units:100000, pip:0.0001, decimals:5, defPrice:0.72250, quoteSym:'$', needsConv:false },
+    USDCAD: { label:'USD/CAD — US Dollar / Canadian Dollar', category:'usd_base', units:100000, pip:0.0001, decimals:5, defPrice:1.37800, quoteSym:'C$', needsConv:false },
+    USDCHF: { label:'USD/CHF — US Dollar / Swiss Franc',  category:'usd_base',  units:100000, pip:0.0001, decimals:5, defPrice:0.80900, quoteSym:'Fr', needsConv:false },
+    NZDUSD: { label:'NZD/USD — New Zealand Dollar / US Dollar', category:'usd_quote', units:100000, pip:0.0001, decimals:5, defPrice:0.58580, quoteSym:'$', needsConv:false },
+    EURGBP: { label:'EUR/GBP — Euro / British Pound',     category:'cross_gbp', units:100000, pip:0.0001, decimals:5, defPrice:0.85850, quoteSym:'£',  needsConv:true, convDefault:1.35450, convLabel:'💱 GBP/USD Rate (converts GBP → USD)' },
+    GBPJPY: { label:'GBP/JPY — British Pound / Japanese Yen', category:'cross_jpy', units:100000, pip:0.01, decimals:3, defPrice:208.500, quoteSym:'¥', needsConv:true, convDefault:154.00, convLabel:'💱 USD/JPY Rate (converts JPY → USD)' },
+    EURJPY: { label:'EUR/JPY — Euro / Japanese Yen',      category:'cross_jpy', units:100000, pip:0.01, decimals:3, defPrice:178.900, quoteSym:'¥', needsConv:true, convDefault:154.00, convLabel:'💱 USD/JPY Rate (converts JPY → USD)' },
+    USDJPY: { label:'USD/JPY — US Dollar / Japanese Yen', category:'usd_base', units:100000, pip:0.01, decimals:3, defPrice:154.000, quoteSym:'¥', needsConv:false }
+  };
+
+  function currentInstrument() { return INSTRUMENTS[document.getElementById('instrument').value]; }
+
+  function populateInstrumentSelect() {
+    const sel = document.getElementById('instrument');
+    Object.keys(INSTRUMENTS).forEach(key => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = INSTRUMENTS[key].label;
+      sel.appendChild(opt);
+    });
+    sel.value = 'XAUUSD';
+  }
+
+  /* Converts a raw quote-currency value to USD for the given instrument */
+  function toUSD(valueInQuoteCcy, inst, entryPrice, convRate) {
+    switch (inst.category) {
+      case 'metal':
+      case 'usd_quote':
+        return valueInQuoteCcy;
+      case 'usd_base':
+        return entryPrice > 0 ? valueInQuoteCcy / entryPrice : 0;
+      case 'cross_gbp':
+        return valueInQuoteCcy * (convRate || inst.convDefault);
+      case 'cross_jpy':
+        return (convRate || inst.convDefault) > 0 ? valueInQuoteCcy / (convRate || inst.convDefault) : 0;
+      default:
+        return valueInQuoteCcy;
+    }
+  }
+
+  /* $ value of ONE pip for a 1.00 (standard) lot, in USD */
+  function pipValuePerStandardLot(inst, entryPrice, convRate) {
+    const raw = inst.pip * inst.units; // value in quote currency for 1.0 lot
+    return toUSD(raw, inst, entryPrice, convRate);
+  }
+
+  function onInstrumentChange() {
+    const inst = currentInstrument();
+    document.getElementById('entry').value = inst.defPrice;
+    // sensible default SL/TP: 0.5% below/above entry for LONG-style defaults
+    const slDefault = +(inst.defPrice - inst.defPrice * 0.0025).toFixed(inst.decimals);
+    const tpDefault = +(inst.defPrice + inst.defPrice * 0.005).toFixed(inst.decimals);
+    document.getElementById('sl').value = slDefault;
+    document.getElementById('tp').value = tpDefault;
+    document.getElementById('entry').step = (1 / Math.pow(10, inst.decimals)).toString();
+    document.getElementById('sl').step    = document.getElementById('entry').step;
+    document.getElementById('tp').step    = document.getElementById('entry').step;
+
+    document.getElementById('prefEntry').textContent = inst.quoteSym;
+    document.getElementById('prefSl').textContent    = inst.quoteSym;
+    document.getElementById('prefTp').textContent    = inst.quoteSym;
+
+    const convRow = document.getElementById('convRow');
+    if (inst.needsConv) {
+      convRow.classList.remove('hidden');
+      document.getElementById('convLabel').textContent = inst.convLabel;
+      document.getElementById('convRate').value = inst.convDefault;
+    } else {
+      convRow.classList.add('hidden');
+    }
+
+    const unitsLabel = inst.category === 'metal' ? '100 oz/lot' : '100,000 units/lot';
+    document.getElementById('instrumentMeta').innerHTML =
+      `<strong>${unitsLabel}</strong> · pip = ${inst.pip}`;
+
+    document.getElementById('lotResultInstrument').textContent = document.getElementById('instrument').options[document.getElementById('instrument').selectedIndex].value;
+
+    calc();
+    calcLot();
+  }
+
   /* ─── DIRECTION TOGGLE ─── */
   let dir = 'long';
   function setDir(d) {
@@ -1230,46 +1327,53 @@ First TP at 200 pips:
     calc();
   }
 
-/* ─── MAIN CALC ─── */
-function calc() {
+  /* ─── MAIN CALC ─── */
+  function calc() {
+    const inst    = currentInstrument();
     const balance = parseFloat(document.getElementById('balance').value) || 0;
     const lot     = parseFloat(document.getElementById('lotSize').value) || 0;
     const entry   = parseFloat(document.getElementById('entry').value)   || 0;
     const sl      = parseFloat(document.getElementById('sl').value)      || 0;
     const tp      = parseFloat(document.getElementById('tp').value)      || 0;
+    const convRate= parseFloat(document.getElementById('convRate').value)|| inst.convDefault;
 
-    const riskPts   = Math.abs(entry - sl);
-    const rewardPts = Math.abs(tp - entry);
-    const riskPips  = riskPts * 10;    // CHANGED: 1 point = 10 pips
-    const rewardPips= rewardPts * 10;  // CHANGED: 1 point = 10 pips
-    const pipVal    = lot * 100;
-    const riskD     = riskPts * pipVal;
-    const rewardD   = rewardPts * pipVal;
-    const riskPct   = balance > 0 ? (riskD / balance * 100) : 0;
-    const rrr       = riskD > 0 ? (rewardD / riskD) : 0;
+    const riskDist   = Math.abs(entry - sl);
+    const rewardDist = Math.abs(tp - entry);
+
+    const riskRawQuote   = riskDist   * inst.units * lot;
+    const rewardRawQuote = rewardDist * inst.units * lot;
+
+    const riskD   = toUSD(riskRawQuote,   inst, entry, convRate);
+    const rewardD = toUSD(rewardRawQuote, inst, entry, convRate);
+
+    const riskPct = balance > 0 ? (riskD / balance * 100) : 0;
+    const rrr     = riskD > 0 ? (rewardD / riskD) : 0;
+
+    const pipVal       = pipValuePerStandardLot(inst, entry, convRate) * lot; // $ per pip for THIS lot size
+    const riskInPips   = inst.pip > 0 ? riskDist / inst.pip : 0;
+    const rewardInPips = inst.pip > 0 ? rewardDist / inst.pip : 0; // ADDED: Calculate Reward in Pips
 
     set('outRiskD',     '$' + riskD.toFixed(2));
     set('outRewardD',   '$' + rewardD.toFixed(2));
     set('outRiskPct',   riskPct.toFixed(2) + '%');
     set('outRRR',       '1 : ' + rrr.toFixed(2));
-    set('outRiskPts',   riskPts.toFixed(2) + ' pts');
-    set('outRewardPts', rewardPts.toFixed(2) + ' pts');
-    set('outSlPips',    riskPips.toFixed(1) + ' pips');     // CHANGED: .toFixed(1) for decimal
-    set('outTpPips',    rewardPips.toFixed(1) + ' pips');   // CHANGED: .toFixed(1) for decimal
-    set('extRiskPips',   riskPts.toFixed(2) + ' pts');
-    set('extRewardPips', rewardPts.toFixed(2) + ' pts');
+    set('outRiskPts',   riskDist.toFixed(inst.decimals) + ' dist');
+    set('outRewardPts', rewardDist.toFixed(inst.decimals) + ' dist');
+    set('outSlPips',    riskInPips.toFixed(1) + ' pips');   // ADDED: Display SL in Pips
+    set('outTpPips',    rewardInPips.toFixed(1) + ' pips'); // ADDED: Display TP in Pips
+    set('extRiskPips',   riskDist.toFixed(inst.decimals));
+    set('extRewardPips', rewardDist.toFixed(inst.decimals));
+    set('extRiskInPips', riskInPips.toFixed(1) + ' pips');
     set('extPipVal',     '$' + pipVal.toFixed(2));
-
-    // ... rest of the function remains the same
 
     const gFill = document.getElementById('gaugeRisk');
     gFill.style.width      = Math.min(riskPct / 5 * 100, 100) + '%';
     gFill.style.background = riskPct <= 1 ? 'var(--green)' : riskPct <= 2 ? 'var(--amber)' : 'var(--red)';
     set('gaugeRiskLabel', riskPct.toFixed(2) + '%');
 
-    const total  = riskPts + rewardPts;
-    const rShr   = total > 0 ? riskPts   / total * 100 : 50;
-    const rwShr  = total > 0 ? rewardPts / total * 100 : 50;
+    const total  = riskDist + rewardDist;
+    const rShr   = total > 0 ? riskDist   / total * 100 : 50;
+    const rwShr  = total > 0 ? rewardDist / total * 100 : 50;
     document.getElementById('rrrRiskBar').style.width   = rShr  + '%';
     document.getElementById('rrrRewardBar').style.width = rwShr + '%';
     document.getElementById('rrrRiskBar').textContent   = rShr  > 12 ? 'RISK'   : '';
@@ -1326,40 +1430,54 @@ function calc() {
 
   /* ─── LOT SIZE CALCULATOR ─── */
   function calcLot() {
+    const inst     = currentInstrument();
     const balance  = parseFloat(document.getElementById('ls-balance').value)  || 0;
     const riskPct  = parseFloat(document.getElementById('ls-risk-pct').value) || 0;
     const slPips   = parseFloat(document.getElementById('ls-sl-pips').value)  || 0;
+    const entry    = parseFloat(document.getElementById('entry').value)      || inst.defPrice;
+    const convRate = parseFloat(document.getElementById('convRate').value)   || inst.convDefault;
+
+    document.getElementById('lotResultInstrument').textContent =
+      document.getElementById('instrument').options[document.getElementById('instrument').selectedIndex].value;
 
     if (balance <= 0 || riskPct <= 0 || slPips <= 0) return;
 
-    const riskD    = balance * (riskPct / 100);
-    const exactLot = riskD / (slPips * 10);
-    const roundedLot = Math.floor(exactLot * 100) / 100;
+    const pipValStd = pipValuePerStandardLot(inst, entry, convRate); // $ per pip, 1.00 lot
 
+    const riskD      = balance * (riskPct / 100);
+    const exactLot   = pipValStd > 0 ? riskD / (slPips * pipValStd) : 0;
+    const roundedLot = Math.floor(exactLot * 100) / 100; // floor to nearest 0.01
+
+    // Lot type
     let lotType = 'Micro Lot (0.01)';
     if (roundedLot >= 1.0)       lotType = 'Standard Lot (1.00+)';
     else if (roundedLot >= 0.10) lotType = 'Mini Lot (0.10+)';
     else                          lotType = 'Micro Lot (0.01+)';
 
+    // Badge
     const badge = document.getElementById('lotResultBadge');
     badge.textContent = roundedLot.toFixed(2) + ' LOTS';
 
+    // Metrics
     set('ls-out-riskd',   '$' + riskD.toFixed(2));
     set('ls-out-riskpct', riskPct.toFixed(2) + '% of balance');
     set('ls-out-exact',   exactLot.toFixed(4));
     set('ls-out-rounded', roundedLot.toFixed(2));
     set('ls-out-type',    lotType);
 
+    // Steps
     setHTML('ls-step1', `Max Risk = <strong>$${balance.toFixed(2)}</strong> × <strong>${riskPct}%</strong> = <strong>$${riskD.toFixed(2)}</strong>`);
-    setHTML('ls-step2', `SL in Points = <strong>${slPips} pips</strong> × 10 = <strong>${(slPips * 10).toFixed(0)} points</strong>`);
-    setHTML('ls-step3', `Exact Lot = <strong>$${riskD.toFixed(2)}</strong> ÷ <strong>${(slPips * 10).toFixed(0)}</strong> = <strong>${exactLot.toFixed(4)} lots</strong>`);
+    setHTML('ls-step2', `Pip value for this instrument (1.00 lot) = <strong>$${pipValStd.toFixed(2)}</strong> per pip`);
+    setHTML('ls-step3', `Exact Lot = <strong>$${riskD.toFixed(2)}</strong> ÷ (<strong>${slPips}</strong> pips × <strong>$${pipValStd.toFixed(2)}</strong>) = <strong>${exactLot.toFixed(4)} lots</strong>`);
     setHTML('ls-step4', `Rounded down to safe lot = <strong>${roundedLot.toFixed(2)} lots</strong> (always round DOWN to protect capital)`);
 
+    // Micro grid
     set('ls-std',   (roundedLot).toFixed(2) + ' std');
     set('ls-mini',  (roundedLot * 10).toFixed(1) + ' mini');
     set('ls-micro', Math.round(roundedLot * 100) + ' micro');
 
-    const actualLoss = roundedLot * slPips * 10;
+    // Actual loss check with rounded lot
+    const actualLoss = roundedLot * slPips * pipValStd;
     const warning    = document.getElementById('lotWarning');
     const warnText   = document.getElementById('lotWarningText');
 
@@ -1395,8 +1513,8 @@ function calc() {
   function setHTML(id, val) { const el = document.getElementById(id); if (el) el.innerHTML   = val; }
 
   /* ─── INIT ─── */
-  calc();
-  calcLot();
+  populateInstrumentSelect();
+  onInstrumentChange();
 </script>
 </body>
 </html>
