@@ -170,8 +170,11 @@
     .calc-btn:active { transform: none; }
 
     /* ── METRICS ── */
-    .metrics-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 11px; margin-bottom: 16px; }
-    @media (max-width: 580px) { .metrics-strip { grid-template-columns: 1fr 1fr; } }
+    .metrics-strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 11px; margin-bottom: 16px; }
+    @media (max-width: 900px) { .metrics-strip { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 580px) { .metrics-strip { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 400px) { .metrics-strip { grid-template-columns: 1fr; } }
+    
     .metric-card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius-sm); padding: 16px 16px 14px;
@@ -184,7 +187,7 @@
     }
     .metric-card:hover   { transform: translateY(-2px); border-color: var(--accent, var(--gold)); }
     .metric-label { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
-    .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 1.38rem; font-weight: 600; color: var(--accent, var(--gold)); line-height: 1; }
+    .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 600; color: var(--accent, var(--gold)); line-height: 1.1; }
     .metric-sub   { font-size: .64rem; color: var(--text-dim); margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
 
     /* ── GAUGE ── */
@@ -503,6 +506,8 @@
     .metric-card:nth-child(2){animation-delay:.05s}
     .metric-card:nth-child(3){animation-delay:.10s}
     .metric-card:nth-child(4){animation-delay:.15s}
+    .metric-card:nth-child(5){animation-delay:.20s}
+    .metric-card:nth-child(6){animation-delay:.25s}
 
     @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
     .lot-result-panel { animation: slideIn .35s ease both; }
@@ -580,6 +585,16 @@
       <div class="metric-label">RRR</div>
       <div class="metric-value" id="outRRR">—</div>
       <div class="metric-sub">risk : reward</div>
+    </div>
+    <div class="metric-card" style="--accent:var(--red)">
+      <div class="metric-label">SL in Pips</div>
+      <div class="metric-value" id="outSlPips">—</div>
+      <div class="metric-sub">stop loss distance</div>
+    </div>
+    <div class="metric-card" style="--accent:var(--green)">
+      <div class="metric-label">TP in Pips</div>
+      <div class="metric-value" id="outTpPips">—</div>
+      <div class="metric-sub">take profit distance</div>
     </div>
   </div>
 
@@ -1215,8 +1230,8 @@ First TP at 200 pips:
     calc();
   }
 
-  /* ─── MAIN CALC ─── */
-  function calc() {
+/* ─── MAIN CALC ─── */
+function calc() {
     const balance = parseFloat(document.getElementById('balance').value) || 0;
     const lot     = parseFloat(document.getElementById('lotSize').value) || 0;
     const entry   = parseFloat(document.getElementById('entry').value)   || 0;
@@ -1225,6 +1240,8 @@ First TP at 200 pips:
 
     const riskPts   = Math.abs(entry - sl);
     const rewardPts = Math.abs(tp - entry);
+    const riskPips  = riskPts * 10;    // CHANGED: 1 point = 10 pips
+    const rewardPips= rewardPts * 10;  // CHANGED: 1 point = 10 pips
     const pipVal    = lot * 100;
     const riskD     = riskPts * pipVal;
     const rewardD   = rewardPts * pipVal;
@@ -1237,9 +1254,13 @@ First TP at 200 pips:
     set('outRRR',       '1 : ' + rrr.toFixed(2));
     set('outRiskPts',   riskPts.toFixed(2) + ' pts');
     set('outRewardPts', rewardPts.toFixed(2) + ' pts');
+    set('outSlPips',    riskPips.toFixed(1) + ' pips');     // CHANGED: .toFixed(1) for decimal
+    set('outTpPips',    rewardPips.toFixed(1) + ' pips');   // CHANGED: .toFixed(1) for decimal
     set('extRiskPips',   riskPts.toFixed(2) + ' pts');
     set('extRewardPips', rewardPts.toFixed(2) + ' pts');
     set('extPipVal',     '$' + pipVal.toFixed(2));
+
+    // ... rest of the function remains the same
 
     const gFill = document.getElementById('gaugeRisk');
     gFill.style.width      = Math.min(riskPct / 5 * 100, 100) + '%';
@@ -1311,48 +1332,33 @@ First TP at 200 pips:
 
     if (balance <= 0 || riskPct <= 0 || slPips <= 0) return;
 
-    // Core formula
-    // 1 pip in XAUUSD = $0.10 per 0.01 lot (micro). Per standard lot = $10 per pip.
-    // Points = pips × 0.1 (since 1 pip = 0.01 and 1 point = 0.1 for XAUUSD pip value)
-    // Lot Size = Risk$ / (SL_pips × 10)  because $1/pip per standard = $10 per pip,
-    // but for the pip-based formula: $value per pip per lot = $10, so for 1 pip move on 0.01 lot = $0.10
-    // Standard formula: Lot = Risk$ / (pips × $10 per pip per standard lot)
-    // but since pip = 0.1 point and point value = lot × 100 → pip value = lot × 10
-    // → Lot = Risk$ / (pips × 10)
-
     const riskD    = balance * (riskPct / 100);
     const exactLot = riskD / (slPips * 10);
-    const roundedLot = Math.floor(exactLot * 100) / 100; // floor to nearest 0.01
+    const roundedLot = Math.floor(exactLot * 100) / 100;
 
-    // Lot type
     let lotType = 'Micro Lot (0.01)';
     if (roundedLot >= 1.0)       lotType = 'Standard Lot (1.00+)';
     else if (roundedLot >= 0.10) lotType = 'Mini Lot (0.10+)';
     else                          lotType = 'Micro Lot (0.01+)';
 
-    // Badge
     const badge = document.getElementById('lotResultBadge');
     badge.textContent = roundedLot.toFixed(2) + ' LOTS';
 
-    // Metrics
     set('ls-out-riskd',   '$' + riskD.toFixed(2));
     set('ls-out-riskpct', riskPct.toFixed(2) + '% of balance');
     set('ls-out-exact',   exactLot.toFixed(4));
     set('ls-out-rounded', roundedLot.toFixed(2));
     set('ls-out-type',    lotType);
 
-    // Steps
     setHTML('ls-step1', `Max Risk = <strong>$${balance.toFixed(2)}</strong> × <strong>${riskPct}%</strong> = <strong>$${riskD.toFixed(2)}</strong>`);
     setHTML('ls-step2', `SL in Points = <strong>${slPips} pips</strong> × 10 = <strong>${(slPips * 10).toFixed(0)} points</strong>`);
     setHTML('ls-step3', `Exact Lot = <strong>$${riskD.toFixed(2)}</strong> ÷ <strong>${(slPips * 10).toFixed(0)}</strong> = <strong>${exactLot.toFixed(4)} lots</strong>`);
     setHTML('ls-step4', `Rounded down to safe lot = <strong>${roundedLot.toFixed(2)} lots</strong> (always round DOWN to protect capital)`);
 
-    // Micro grid
     set('ls-std',   (roundedLot).toFixed(2) + ' std');
     set('ls-mini',  (roundedLot * 10).toFixed(1) + ' mini');
     set('ls-micro', Math.round(roundedLot * 100) + ' micro');
 
-    // Actual loss check with rounded lot
     const actualLoss = roundedLot * slPips * 10;
     const warning    = document.getElementById('lotWarning');
     const warnText   = document.getElementById('lotWarningText');
