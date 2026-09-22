@@ -118,7 +118,7 @@
       transition: background .3s, border-color .3s; margin-bottom: 16px;
     }
 
-    /* ── INSTRUMENT SELECTOR ── */
+    /* ── INSTRUMENT SELECTOR ─ */
     .instrument-row { display: flex; gap: 13px; margin-bottom: 18px; flex-wrap: wrap; }
     .instrument-select-wrap { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 6px; }
     .instrument-select-wrap label {
@@ -201,7 +201,7 @@
     .calc-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(245,200,66,.48); filter: brightness(1.05); }
     .calc-btn:active { transform: none; }
 
-    /* ── METRICS ── */
+    /* ── METRICS ─ */
     .metrics-strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 11px; margin-bottom: 16px; }
     @media (max-width: 900px) { .metrics-strip { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 580px) { .metrics-strip { grid-template-columns: repeat(2, 1fr); } }
@@ -231,7 +231,7 @@
     .gauge-track  { height: 7px; background: var(--surface-3); border-radius: 100px; overflow: hidden; }
     .gauge-fill   { height: 100%; border-radius: 100px; transition: width .55s cubic-bezier(.34,1.4,.64,1), background .3s; }
 
-    /* ── RRR BAR ── */
+    /* ─ RRR BAR ── */
     .rrr-visual {
       display: flex; height: 30px; border-radius: var(--radius-sm);
       overflow: hidden; border: 1px solid var(--border-md); margin-top: 9px;
@@ -552,7 +552,7 @@
 <body>
 <div class="app">
 
-  <!-- ══ HEADER ══ -->
+  <!-- ══ HEADER ═ -->
   <header>
     <div class="brand">
       <div class="brand-icon">⚡</div>
@@ -650,7 +650,7 @@
     </div>
   </div>
 
-  <!-- ══ VISUAL GAUGES ══ -->
+  <!-- ══ VISUAL GAUGES ═ -->
   <div class="card">
     <div class="gauge-section">
       <div class="gauge-header">
@@ -696,7 +696,7 @@
     </div>
   </div>
 
-  <!-- ══ EXTENDED STATS ══ -->
+  <!-- ══ EXTENDED STATS ═ -->
   <div class="section-label">Extended Stats</div>
   <div class="card">
     <div class="ext-grid">
@@ -709,7 +709,7 @@
 
   <!-- ════════════════════════════════════════════
        TOOL: LOT SIZE FROM SL IN PIPS
-  ════════════════════════════════════════════ -->
+  ═══════════════════════════════════════════ -->
   <div class="tool-divider"><span>Smart Position Sizing Tool</span></div>
 
   <div class="section-label">Lot Size Calculator — From SL in Pips</div>
@@ -855,7 +855,7 @@ Reward Distance = |Take Profit − Entry|</div>
           <div class="fb-header"><div class="fb-icon">💵</div><div><div class="fb-title">Risk &amp; Reward in Dollars — Universal Formula</div><div class="fb-subtitle">Works for XAUUSD and all 10 forex pairs</div></div></div>
           <div class="formula-eq">Value in Quote Currency = Distance × Contract Units × Lot Size
 
-Risk ($)   = (Risk Distance   × Contract Units × Lot) ÷ Conversion Factor
+Risk ($)   = (Risk Distance   × Contract Units × Lot)  Conversion Factor
 Reward ($) = (Reward Distance × Contract Units × Lot) ÷ Conversion Factor</div>
           <div class="fb-desc">
             <strong style="color:var(--gold)">Contract Units</strong> = 100 oz for XAUUSD, or 100,000 units for standard forex lots.<br/>
@@ -868,6 +868,7 @@ Reward ($) = (Reward Distance × Contract Units × Lot) ÷ Conversion Factor</di
             <tr><td class="var-name">USD-Base</td><td>USD/JPY, USD/CAD, USD/CHF</td><td>Divide by Entry Price</td></tr>
             <tr><td class="var-name">Cross (GBP quote)</td><td>EUR/GBP</td><td>Multiply by GBP/USD rate</td></tr>
             <tr><td class="var-name">Cross (JPY quote)</td><td>GBP/JPY, EUR/JPY</td><td>Divide by USD/JPY rate</td></tr>
+            <tr><td class="var-name">Index/Futures</td><td>US10, DXY</td><td>1 (already USD)</td></tr>
           </table>
           <div class="note-box"><strong>Why this matters:</strong> A pip on GBP/JPY isn't worth the same in USD as a pip on EUR/USD. The calculator applies the correct factor automatically based on the instrument you select — you only need to supply a conversion rate for cross pairs (a sensible default is pre-filled).</div>
         </div>
@@ -880,7 +881,7 @@ Reward ($) = (Reward Distance × Contract Units × Lot) ÷ Conversion Factor</di
 
         <div class="formula-block">
           <div class="fb-header"><div class="fb-icon">⚖️</div><div><div class="fb-title">Risk-to-Reward Ratio (RRR)</div><div class="fb-subtitle">How much you gain vs how much you risk per trade</div></div></div>
-          <div class="formula-eq">RRR = Reward ($) ÷ Risk ($)   →  expressed as  1 : RRR</div>
+          <div class="formula-eq">RRR = Reward ($)  Risk ($)   →  expressed as  1 : RRR</div>
           <div class="fb-desc">RRR of 2.0 means "for every $1 risked, you stand to make $2." Always expressed with Risk as 1.</div>
           <div class="note-box"><strong>Why it matters:</strong> With 1:2 RRR you only need to win <strong>34%</strong> of trades to break even. With 1:3 that drops to <strong>25%</strong>.</div>
         </div>
@@ -900,10 +901,12 @@ Reward ($) = (Reward Distance × Contract Units × Lot) ÷ Conversion Factor</di
               <tr><td class="var-name">NZD/USD</td><td>USD-Quote</td><td>100,000 NZD</td><td>0.0001</td><td>≈ $10.00</td></tr>
               <tr><td class="var-name">USD/JPY</td><td>USD-Base</td><td>100,000 USD</td><td>0.01</td><td>≈ $1,000 ÷ price</td></tr>
               <tr><td class="var-name">USD/CAD</td><td>USD-Base</td><td>100,000 USD</td><td>0.0001</td><td>≈ $10 ÷ price</td></tr>
-              <tr><td class="var-name">USD/CHF</td><td>USD-Base</td><td>100,000 USD</td><td>0.0001</td><td>≈ $10 ÷ price</td></tr>
+              <tr><td class="var-name">USD/CHF</td><td>USD-Base</td><td>100,000 USD</td><td>0.0001</td><td>≈ $10  price</td></tr>
               <tr><td class="var-name">EUR/GBP</td><td>Cross (GBP)</td><td>100,000 EUR</td><td>0.0001</td><td>≈ $10 × GBPUSD</td></tr>
-              <tr><td class="var-name">GBP/JPY</td><td>Cross (JPY)</td><td>100,000 GBP</td><td>0.01</td><td>≈ $1,000 ÷ USDJPY</td></tr>
+              <tr><td class="var-name">GBP/JPY</td><td>Cross (JPY)</td><td>100,000 GBP</td><td>0.01</td><td>≈ $1,000  USDJPY</td></tr>
               <tr><td class="var-name">EUR/JPY</td><td>Cross (JPY)</td><td>100,000 EUR</td><td>0.01</td><td>≈ $1,000 ÷ USDJPY</td></tr>
+              <tr><td class="var-name">US10</td><td>Index</td><td>1,000 units</td><td>0.01</td><td>≈ $10.00</td></tr>
+              <tr><td class="var-name">DXY</td><td>Index</td><td>1,000 units</td><td>0.01</td><td>≈ $10.00</td></tr>
             </table>
           </div>
           <div class="fb-desc" style="margin-top:10px;">*Approximate, at typical current market rates. Values move with the live exchange rate for any pair that isn't USD-quoted.</div>
@@ -991,7 +994,7 @@ Reward ($) = 0.00500 × 10,000 = $50.00
 
 Risk (%) = ($25.00 ÷ $2,000.00) × 100 = 1.25%
 RRR = $50.00 ÷ $25.00 = 1 : 2.00</div>
-          <div class="fb-desc" style="color:var(--amber)">⚠️ 1.25% risk is moderate — still inside acceptable range, but reduce lot size for a more conservative trade.</div>
+          <div class="fb-desc" style="color:var(--amber)">️ 1.25% risk is moderate — still inside acceptable range, but reduce lot size for a more conservative trade.</div>
         </div>
 
         <div class="formula-block">
@@ -1011,7 +1014,7 @@ Risk (JPY)   = 0.300 × 100,000 × 0.20 = 6,000 JPY
 Reward (JPY) = 0.600 × 100,000 × 0.20 = 12,000 JPY
 
 Convert JPY → USD by dividing by Entry Price (154.000):
-Risk ($)   = 6,000 ÷ 154.000 =  $38.96
+Risk ($)   = 6,000  154.000 =  $38.96
 Reward ($) = 12,000 ÷ 154.000 = $77.92
 
 Risk (%) = ($38.96 ÷ $5,000.00) × 100 = 0.78%
@@ -1231,7 +1234,7 @@ Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
 <script>
   /* ═══════════════════════════════════════════════
      INSTRUMENT CONFIG
-     category: metal | usd_quote | usd_base | cross_gbp | cross_jpy
+     category: metal | usd_quote | usd_base | cross_gbp | cross_jpy | index
   ═══════════════════════════════════════════════ */
   const INSTRUMENTS = {
     XAUUSD: { label:'XAUUSD — Gold / US Dollar',        category:'metal',     units:100,    pip:0.1,    decimals:2, defPrice:4380.00, quoteSym:'$',  needsConv:false },
@@ -1244,7 +1247,9 @@ Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
     EURGBP: { label:'EUR/GBP — Euro / British Pound',     category:'cross_gbp', units:100000, pip:0.0001, decimals:5, defPrice:0.85850, quoteSym:'£',  needsConv:true, convDefault:1.35450, convLabel:'💱 GBP/USD Rate (converts GBP → USD)' },
     GBPJPY: { label:'GBP/JPY — British Pound / Japanese Yen', category:'cross_jpy', units:100000, pip:0.01, decimals:3, defPrice:208.500, quoteSym:'¥', needsConv:true, convDefault:154.00, convLabel:'💱 USD/JPY Rate (converts JPY → USD)' },
     EURJPY: { label:'EUR/JPY — Euro / Japanese Yen',      category:'cross_jpy', units:100000, pip:0.01, decimals:3, defPrice:178.900, quoteSym:'¥', needsConv:true, convDefault:154.00, convLabel:'💱 USD/JPY Rate (converts JPY → USD)' },
-    USDJPY: { label:'USD/JPY — US Dollar / Japanese Yen', category:'usd_base', units:100000, pip:0.01, decimals:3, defPrice:154.000, quoteSym:'¥', needsConv:false }
+    USDJPY: { label:'USD/JPY — US Dollar / Japanese Yen', category:'usd_base', units:100000, pip:0.01, decimals:3, defPrice:154.000, quoteSym:'¥', needsConv:false },
+    US10:   { label:'US10 — US 10-Year Treasury Note',   category:'index',     units:1000,   pip:0.01,   decimals:2, defPrice:110.00,  quoteSym:'$',  needsConv:false },
+    DXY:    { label:'DXY — US Dollar Index',             category:'index',     units:1000,   pip:0.01,   decimals:2, defPrice:105.00,  quoteSym:'$',  needsConv:false }
   };
 
   function currentInstrument() { return INSTRUMENTS[document.getElementById('instrument').value]; }
@@ -1265,6 +1270,7 @@ Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
     switch (inst.category) {
       case 'metal':
       case 'usd_quote':
+      case 'index':
         return valueInQuoteCcy;
       case 'usd_base':
         return entryPrice > 0 ? valueInQuoteCcy / entryPrice : 0;
@@ -1308,7 +1314,8 @@ Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
       convRow.classList.add('hidden');
     }
 
-    const unitsLabel = inst.category === 'metal' ? '100 oz/lot' : '100,000 units/lot';
+    const unitsLabel = inst.category === 'metal' ? '100 oz/lot' : 
+                       inst.category === 'index' ? '1,000 units/lot' : '100,000 units/lot';
     document.getElementById('instrumentMeta').innerHTML =
       `<strong>${unitsLabel}</strong> · pip = ${inst.pip}`;
 
@@ -1351,7 +1358,7 @@ Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
 
     const pipVal       = pipValuePerStandardLot(inst, entry, convRate) * lot; // $ per pip for THIS lot size
     const riskInPips   = inst.pip > 0 ? riskDist / inst.pip : 0;
-    const rewardInPips = inst.pip > 0 ? rewardDist / inst.pip : 0; // ADDED: Calculate Reward in Pips
+    const rewardInPips = inst.pip > 0 ? rewardDist / inst.pip : 0;
 
     set('outRiskD',     '$' + riskD.toFixed(2));
     set('outRewardD',   '$' + rewardD.toFixed(2));
@@ -1359,8 +1366,8 @@ Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
     set('outRRR',       '1 : ' + rrr.toFixed(2));
     set('outRiskPts',   riskDist.toFixed(inst.decimals) + ' dist');
     set('outRewardPts', rewardDist.toFixed(inst.decimals) + ' dist');
-    set('outSlPips',    riskInPips.toFixed(1) + ' pips');   // ADDED: Display SL in Pips
-    set('outTpPips',    rewardInPips.toFixed(1) + ' pips'); // ADDED: Display TP in Pips
+    set('outSlPips',    riskInPips.toFixed(1) + ' pips');
+    set('outTpPips',    rewardInPips.toFixed(1) + ' pips');
     set('extRiskPips',   riskDist.toFixed(inst.decimals));
     set('extRewardPips', rewardDist.toFixed(inst.decimals));
     set('extRiskInPips', riskInPips.toFixed(1) + ' pips');
@@ -1505,14 +1512,14 @@ Runner Target →  Previous High (LONG) or Previous Low (SHORT)</div>
   document.getElementById('themeBtn').addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
+    document.getElementById('themeBtn').textContent = isDark ? '☀️' : '';
   });
 
   /* ─── HELPERS ─── */
   function set(id, val)     { const el = document.getElementById(id); if (el) el.textContent = val; }
   function setHTML(id, val) { const el = document.getElementById(id); if (el) el.innerHTML   = val; }
 
-  /* ─── INIT ─── */
+  /* ─── INIT ── */
   populateInstrumentSelect();
   onInstrumentChange();
 </script>
